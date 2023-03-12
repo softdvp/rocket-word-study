@@ -584,6 +584,7 @@ begin
       FullStudyMode:=true;
       btnOk.Action:=actStudy;
       Run;
+      tmrPass.Enabled:=false;
       tmrPass.Enabled:=true;
       ClearCard;
       ShowFullCard(qrStudy)
@@ -1191,9 +1192,9 @@ begin
   pnlMain.Color:=clSilver;
   Application.ProcessMessages;
 
+  tmrSleep.Enabled:=false;
   tmrSleep.Interval:=100;
-
-  tmrSleep.Enabled:=True;
+  tmrSleep.Enabled:=true;
 
   while tmrSleep.Enabled do
   begin
@@ -1207,6 +1208,8 @@ procedure TMainForm.actStudyExecute(Sender: TObject);
 var
   Id, Idx: integer;
 begin
+  tmrPass.Enabled:=false;
+
   with dm do
   begin
     if FullStudyMode then
@@ -1257,6 +1260,7 @@ begin
       end
       else
       begin
+        tmrPass.Enabled:=false;
         tmrPass.Enabled:=true;
         ClearCard;
         ShowFullCard(qrStudy);
