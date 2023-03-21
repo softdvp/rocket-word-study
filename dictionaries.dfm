@@ -3,8 +3,8 @@ object frmDict: TfrmDict
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Dictionaries'
-  ClientHeight = 507
-  ClientWidth = 873
+  ClientHeight = 506
+  ClientWidth = 869
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,14 @@ object frmDict: TfrmDict
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
-    Top = 446
-    Width = 873
+    Top = 445
+    Width = 869
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 445
-    ExplicitWidth = 869
+    ExplicitTop = 444
+    ExplicitWidth = 865
     object btnOk: TBitBtn
       Left = 573
       Top = 6
@@ -61,27 +61,27 @@ object frmDict: TfrmDict
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 873
-    Height = 446
+    Width = 869
+    Height = 445
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 869
-    ExplicitHeight = 445
+    ExplicitWidth = 865
+    ExplicitHeight = 444
     object GroupBox1: TGroupBox
       Left = 1
       Top = 1
-      Width = 448
-      Height = 444
+      Width = 444
+      Height = 443
       Align = alClient
       Caption = 'Dictionaries'
       TabOrder = 0
-      ExplicitWidth = 444
-      ExplicitHeight = 443
+      ExplicitWidth = 440
+      ExplicitHeight = 442
       object dbgDict: TDBGrid
         Left = 2
         Top = 17
-        Width = 444
-        Height = 384
+        Width = 440
+        Height = 383
         Align = alClient
         DataSource = dm.dsDict
         Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -104,13 +104,13 @@ object frmDict: TfrmDict
       end
       object Panel5: TPanel
         Left = 2
-        Top = 401
-        Width = 444
+        Top = 400
+        Width = 440
         Height = 41
         Align = alBottom
         TabOrder = 1
-        ExplicitTop = 400
-        ExplicitWidth = 440
+        ExplicitTop = 399
+        ExplicitWidth = 436
         object btnImport: TButton
           Left = 10
           Top = 6
@@ -172,15 +172,15 @@ object frmDict: TfrmDict
       end
     end
     object GroupBox2: TGroupBox
-      Left = 449
+      Left = 445
       Top = 1
       Width = 423
-      Height = 444
+      Height = 443
       Align = alRight
       Caption = 'Words'
       TabOrder = 1
-      ExplicitLeft = 445
-      ExplicitHeight = 443
+      ExplicitLeft = 441
+      ExplicitHeight = 442
       object Panel3: TPanel
         Left = 2
         Top = 17
@@ -253,12 +253,12 @@ object frmDict: TfrmDict
       end
       object Panel4: TPanel
         Left = 2
-        Top = 401
+        Top = 400
         Width = 419
         Height = 41
         Align = alBottom
         TabOrder = 1
-        ExplicitTop = 400
+        ExplicitTop = 399
         object SpeedButton1: TSpeedButton
           Left = 320
           Top = 6
@@ -294,7 +294,7 @@ object frmDict: TfrmDict
         Left = 2
         Top = 107
         Width = 419
-        Height = 294
+        Height = 293
         Align = alClient
         AllowDeleteRecord = False
         AllowEdit = False
@@ -314,7 +314,6 @@ object frmDict: TfrmDict
         OnCheckClick = dbgWordsCheckClick
         OnGetCheckState = dbgWordsGetCheckState
         OnKeyDown = dbgWordsKeyDown
-        OnKeyPress = dbgWordsKeyPress
         Columns = <
           item
             AlignEdit = True
@@ -342,12 +341,12 @@ object frmDict: TfrmDict
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 481
-    Width = 873
+    Top = 480
+    Width = 869
     Height = 26
     Panels = <>
-    ExplicitTop = 480
-    ExplicitWidth = 869
+    ExplicitTop = 479
+    ExplicitWidth = 865
   end
   object ImageList1: TImageList
     Left = 528

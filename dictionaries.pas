@@ -88,7 +88,6 @@ type
       var Accept: Boolean);
     procedure dbgWordsKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure dbgWordsKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     LastWord : string;
@@ -643,7 +642,7 @@ begin
       LastWord:=word;
       dbgWords.DataSource.DataSet.Prior;
 
-      if not MainForm.SoundBusy and (*isSound and *) dbgWords.Focused then
+      if not MainForm.SoundBusy and dbgWords.Focused then
         MainForm.PronounceWords(word);
     end;
 
@@ -655,25 +654,8 @@ begin
       LastWord:=word;
       dbgWords.DataSource.DataSet.Next;
 
-      if not MainForm.SoundBusy and (* isSound and *) dbgWords.Focused then
+      if not MainForm.SoundBusy and dbgWords.Focused then
       MainForm.PronounceWords(word);
-    end;
-  end;
-end;
-
-procedure TfrmDict.dbgWordsKeyPress(Sender: TObject; var Key: Char);
-begin
-  case Key of
-    #32:
-    begin
-      with dm do
-      begin
-        qrWords.Edit;
-        qrWords['SELECTED']:=not qrWords['SELECTED'];
-        qrWords.Post;
-
-        dbgWords.InvalidateCell(GridCell(0, 0));
-      end;
     end;
   end;
 end;

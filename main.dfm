@@ -3,8 +3,8 @@ object MainForm: TMainForm
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Rocket Word Study '
-  ClientHeight = 342
-  ClientWidth = 692
+  ClientHeight = 341
+  ClientWidth = 688
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,12 +24,11 @@ object MainForm: TMainForm
   object ToolBar2: TToolBar
     Left = 0
     Top = 0
-    Width = 692
+    Width = 688
     Height = 29
     Caption = 'ToolBar2'
     Images = imgMain
     TabOrder = 0
-    ExplicitWidth = 688
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -76,8 +75,8 @@ object MainForm: TMainForm
   end
   object sbMain: TStatusBar
     Left = 0
-    Top = 309
-    Width = 692
+    Top = 308
+    Width = 688
     Height = 33
     Panels = <
       item
@@ -110,19 +109,15 @@ object MainForm: TMainForm
       end>
     ParentShowHint = False
     ShowHint = True
-    ExplicitTop = 308
-    ExplicitWidth = 688
   end
   object plMain: TJvPageList
     Left = 0
     Top = 29
-    Width = 692
-    Height = 280
+    Width = 688
+    Height = 279
     ActivePage = pge1
     PropagateEnable = False
     Align = alClient
-    ExplicitWidth = 688
-    ExplicitHeight = 279
     object pge1: TJvStandardPage
       Left = 0
       Top = 0
