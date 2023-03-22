@@ -89,6 +89,7 @@ type
     procedure dbgWordsKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure dbgWordsDblClick(Sender: TObject);
   private
     LastWord : string;
 //    IsSound : boolean;
@@ -607,7 +608,19 @@ begin
     qrWords['SELECTED']:=not qrWords['SELECTED'];
     qrWords.Post;
 
-    dbgWords.InvalidateCell(GridCell(0, Cell.Row));
+    //dbgWords.InvalidateCell(GridCell(0, Cell.Row));
+  end;
+end;
+
+procedure TfrmDict.dbgWordsDblClick(Sender: TObject);
+begin
+  with dm do
+  begin
+    qrWords.Edit;
+    qrWords['SELECTED']:=not qrWords['SELECTED'];
+    qrWords.Post;
+
+    //dbgWords.InvalidateCell(GridCell(0, Cell.Row));
   end;
 end;
 

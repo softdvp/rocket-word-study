@@ -312,6 +312,7 @@ object frmDict: TfrmDict
         OnCellAcceptCursor = dbgWordsCellAcceptCursor
         OnCellClick = dbgWordsCellClick
         OnCheckClick = dbgWordsCheckClick
+        OnDblClick = dbgWordsDblClick
         OnGetCheckState = dbgWordsGetCheckState
         OnKeyDown = dbgWordsKeyDown
         Columns = <
