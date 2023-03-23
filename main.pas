@@ -1208,6 +1208,7 @@ procedure TMainForm.actStudyExecute(Sender: TObject);
 var
   Id, Idx: integer;
 begin
+  LastTranslation:='';
   tmrPass.Enabled:=false;
 
   with dm do
@@ -1330,6 +1331,7 @@ procedure TMainForm.actRepetitionExecute(Sender: TObject);
 var
   Id, Idx, CurLevel, OldLevel: integer;
 begin
+  LastTranslation:='';
   with dm do
   begin
     tmrTimeout.Enabled:=false;
@@ -1543,6 +1545,8 @@ procedure TMainForm.PronounceWords(words: string);
 var
   w:string;
 begin
+  if words='' then exit;
+  
   ExtractStrings([' ',',','-','?'], [], PChar(words), WordList);
 
   try

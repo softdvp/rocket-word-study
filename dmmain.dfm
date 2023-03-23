@@ -13,7 +13,8 @@ object dm: Tdm
       'Database=C:\Development\Rocket Word Study\rws.db'
       'DriverID=SQLite'
       'StringFormat=Unicode'
-      'OpenMode=CreateUTF8')
+      'OpenMode=CreateUTF8'
+      'LockingMode=Normal')
     LoginPrompt = False
     Left = 56
     Top = 8
