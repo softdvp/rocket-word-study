@@ -16,6 +16,8 @@ unit dmmain;
 //[^(\t]+(?:\([^)]+\)){0,2}[^)\t]*
 //[^,]+\((?:[^()]{0,}|(?R))*\)|[^(,\n]+  -  PCRE
 
+
+
 {$IFDEF DEBUG}
 {$DEFINE TEST}
 {$ENDIF}
@@ -48,6 +50,8 @@ const
   {$ELSE}
   db_file='rws.db';
   {$ENDIF}
+
+  g_MsClickSound='mouseclick.ogg';
 
   g_Learning=100;
   g_Studied=101;
@@ -87,6 +91,7 @@ type
 var
   dm: Tdm;
   g_Commondocs: string;
+
 
 implementation
 

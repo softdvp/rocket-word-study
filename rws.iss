@@ -49,6 +49,7 @@ VersionInfoProductName={#MyAppName}
 VersionInfoVersion={#MyAppVersion}
 VersionInfoDescription={#MyAppName}
 UninstallDisplayName={#MyAppName}
+LicenseFile=license
 AppCopyright=Copyright © {#MyAppPublisher} 2023
 
 [Languages]
@@ -68,7 +69,7 @@ Source: "{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
   #error Program version is a debug version
 #endif
 
-Source: "db\rws.db"; DestDir: "{#WorkDir}"; Flags: ignoreversion
+Source: "db\rws.db"; DestDir: "{#WorkDir}"; Flags: onlyifdoesntexist
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "{#Dictionaries}"; DestDir: "{app}\Dictionaries"; Flags: ignoreversion recursesubdirs createallsubdirs

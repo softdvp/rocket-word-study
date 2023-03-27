@@ -30,6 +30,7 @@ object MainForm: TMainForm
     Caption = 'ToolBar2'
     Images = imgMain
     TabOrder = 0
+    ExplicitWidth = 680
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -76,7 +77,7 @@ object MainForm: TMainForm
     object pnlSession: TPanel
       Left = 138
       Top = 0
-      Width = 543
+      Width = 488
       Height = 28
       Margins.Top = 0
       Margins.Bottom = 0
@@ -87,6 +88,18 @@ object MainForm: TMainForm
       ParentBackground = False
       ParentCtl3D = False
       TabOrder = 0
+    end
+    object btnReset: TButton
+      Left = 626
+      Top = 0
+      Width = 37
+      Height = 28
+      Hint = 'Reset clock'
+      Caption = 'Reset'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnClick = btnResetClick
     end
   end
   object sbMain: TStatusBar
@@ -2098,5 +2111,32 @@ object MainForm: TMainForm
     OnTimer = tmrSessionTimer
     Left = 248
     Top = 133
+  end
+  object VbMouse: TVorbisIn
+    Loop = False
+    EndSample = -1
+    StartSample = 0
+    Left = 352
+    Top = 56
+  end
+  object dsMouse: TDSAudioOut
+    Input = VbMouse
+    OnDone = dsMouseDone
+    OnProgress = dsOutProgress
+    DeviceNumber = 0
+    Calibrate = False
+    Latency = 100
+    SpeedFactor = 1.000000000000000000
+    Left = 424
+    Top = 56
+  end
+  object aeMain: TApplicationEvents
+    OnMessage = aeMainMessage
+    Left = 424
+    Top = 141
+  end
+  object JvAppEvents1: TJvAppEvents
+    Left = 600
+    Top = 125
   end
 end

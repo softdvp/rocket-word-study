@@ -1,12 +1,12 @@
 (*
 		This Source Code Form is subject to the terms of the MIT
-		License. 
+		License.
 
 		Copyright (c) 2023 Oleg Popov
 		Copyright (c) 2023 Rocket Technologies (https://www.rockettech.com)
 
 *)
-
+{$DEFINE MOUSECLICK}
 unit main;
 
 interface
@@ -18,7 +18,7 @@ uses
   System.Actions, Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.ComCtrls,
   Vcl.ToolWin, JclFileUtils, JvTimer, ACS_Classes, NewACDSAudio, ACS_Vorbis, ShellFileSupport,
   Vcl.AppEvnts, JvExComCtrls, JvComCtrls, JvTabBar, JvPageList, JvExControls, UITypes,
-  Vcl.Imaging.pngimage, ACS_DXAudio;
+  Vcl.Imaging.pngimage, ACS_DXAudio, JvComponentBase, JvAppEvent;
 
 type
 
@@ -85,6 +85,11 @@ type
     tmrEnableActn: TTimer;
     pnlSession: TPanel;
     tmrSession: TTimer;
+    btnReset: TButton;
+    VbMouse: TVorbisIn;
+    dsMouse: TDSAudioOut;
+    aeMain: TApplicationEvents;
+    JvAppEvents1: TJvAppEvents;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -131,10 +136,14 @@ type
     procedure tmrEnableActnTimer(Sender: TObject);
     procedure dsOutProgress(Sender: TComponent);
     procedure tmrSessionTimer(Sender: TObject);
+    procedure btnResetClick(Sender: TObject);
+    procedure dsMouseDone(Sender: TComponent);
+    procedure aeMainMessage(var Msg: tagMSG; var Handled: Boolean);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
-    isTimeout, isPause, isFrontShown, isPassed, isStudied: boolean;
+    isTimeout, isPause, isFrontShown, isPassed, isStudied,
+    isMouseBusy : boolean;
 
     IDList: TList<Integer>;
     WordList:TStringList;
@@ -175,6 +184,7 @@ type
     procedure ResetStats(Query: TFDQuery);
     procedure SetRepeatNextLevel(Query: TFDQuery);
     procedure StudyBackCard(Query: TFDQuery);
+    procedure SoundMouseClick;
 
   public
     SoundBusy: boolean;
@@ -283,6 +293,7 @@ procedure TMainForm.actLearnExecute(Sender: TObject);
 var
   t:integer;
 begin
+
   with dm do
   begin
 
@@ -322,7 +333,6 @@ end;
 
 procedure TMainForm.actRepeatExecute(Sender: TObject);
 begin
-
   with dm do
   begin
     qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE<>'+IntToStr(g_Studied);
@@ -1003,6 +1013,11 @@ begin
   lblTranslate.Caption:='';
 end;
 
+procedure TMainForm.dsMouseDone(Sender: TComponent);
+begin
+  isMouseBusy:=false;
+end;
+
 procedure TMainForm.dsOutDone(Sender: TComponent);
 var
   w:string;
@@ -1189,6 +1204,14 @@ begin
     btnOk.Action.Execute;
 end;
 
+procedure TMainForm.btnResetClick(Sender: TObject);
+var t:TDateTime;
+begin
+  SessionTime:=0;
+  t:=SessionTime/SecsPerDay;
+  pnlSession.Caption:=FormatDateTime('hh:nn', t)+'   ';
+end;
+
 procedure TMainForm.About1Click(Sender: TObject);
 begin
   fmAbout.ShowModal;
@@ -1339,11 +1362,18 @@ begin
   actLearn.Execute;
 end;
 
+procedure TMainForm.aeMainMessage(var Msg: tagMSG; var Handled: Boolean);
+begin
+  if Msg.Message=WM_LBUTTONDOWN then
+    SoundMouseClick;
+end;
+
 procedure TMainForm.actRepetitionExecute(Sender: TObject);
 var
   Id, Idx, CurLevel, OldLevel: integer;
 begin
   LastTranslation:='';
+
   with dm do
   begin
     tmrTimeout.Enabled:=false;
@@ -1453,6 +1483,21 @@ begin
   on E: Exception do
     ShowMessage('ShowWord: '+E.Message);
   end;
+end;
+
+procedure TMainForm.SoundMouseClick;
+begin
+
+{$IFDEF MOUSECLICK}
+
+  if isMouseBusy then exit;
+
+  vbMouse.FileName:=g_MsClickSound;
+  isMouseBusy:=true;
+  dsMouse.Run;
+
+{$ENDIF}
+
 end;
 
 procedure TMainForm.ShowTranslate;
