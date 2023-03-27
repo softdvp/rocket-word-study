@@ -3,8 +3,8 @@ object MainForm: TMainForm
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Rocket Word Study '
-  ClientHeight = 341
-  ClientWidth = 688
+  ClientHeight = 340
+  ClientWidth = 684
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,12 +24,12 @@ object MainForm: TMainForm
   object ToolBar2: TToolBar
     Left = 0
     Top = 0
-    Width = 688
+    Width = 684
     Height = 29
+    ButtonHeight = 28
     Caption = 'ToolBar2'
     Images = imgMain
     TabOrder = 0
-    ExplicitWidth = 684
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -73,11 +73,26 @@ object MainForm: TMainForm
       ParentShowHint = False
       ShowHint = True
     end
+    object pnlSession: TPanel
+      Left = 138
+      Top = 0
+      Width = 543
+      Height = 28
+      Margins.Top = 0
+      Margins.Bottom = 0
+      Align = alRight
+      Alignment = taRightJustify
+      BevelOuter = bvNone
+      Ctl3D = False
+      ParentBackground = False
+      ParentCtl3D = False
+      TabOrder = 0
+    end
   end
   object sbMain: TStatusBar
     Left = 0
-    Top = 308
-    Width = 688
+    Top = 307
+    Width = 684
     Height = 33
     Panels = <
       item
@@ -110,39 +125,39 @@ object MainForm: TMainForm
       end>
     ParentShowHint = False
     ShowHint = True
-    ExplicitTop = 307
-    ExplicitWidth = 684
+    ExplicitTop = 306
+    ExplicitWidth = 680
   end
   object plMain: TJvPageList
     Left = 0
     Top = 29
-    Width = 688
-    Height = 279
+    Width = 684
+    Height = 278
     ActivePage = pge1
     PropagateEnable = False
     Align = alClient
-    ExplicitWidth = 684
-    ExplicitHeight = 278
+    ExplicitWidth = 680
+    ExplicitHeight = 277
     object pge1: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 688
-      Height = 279
-      ExplicitWidth = 684
-      ExplicitHeight = 278
+      Width = 684
+      Height = 278
+      ExplicitWidth = 680
+      ExplicitHeight = 277
       object pnlOk: TPanel
         Left = 0
-        Top = 222
-        Width = 688
+        Top = 221
+        Width = 684
         Height = 57
         Align = alBottom
         TabOrder = 0
-        ExplicitTop = 221
-        ExplicitWidth = 684
+        ExplicitTop = 220
+        ExplicitWidth = 680
         object btnOk: TButton
           Left = 1
           Top = 1
-          Width = 686
+          Width = 682
           Height = 55
           Align = alClient
           Caption = 'Continue'
@@ -155,27 +170,27 @@ object MainForm: TMainForm
           ParentFont = False
           TabOrder = 0
           Visible = False
-          ExplicitWidth = 682
+          ExplicitWidth = 678
         end
       end
       object pnlMain: TPanel
         Left = 0
         Top = 0
-        Width = 688
-        Height = 222
+        Width = 684
+        Height = 221
         Align = alClient
         Color = clWindow
         ParentBackground = False
         PopupMenu = ppMain
         TabOrder = 1
         OnClick = pnlMainClick
-        ExplicitWidth = 684
-        ExplicitHeight = 221
+        ExplicitWidth = 680
+        ExplicitHeight = 220
         object lblWord: TLabel
           Left = 1
           Top = 75
-          Width = 686
-          Height = 72
+          Width = 682
+          Height = 71
           Align = alClient
           Alignment = taCenter
           AutoSize = False
@@ -194,7 +209,7 @@ object MainForm: TMainForm
         object lblTranslate: TLabel
           Left = 1
           Top = 1
-          Width = 686
+          Width = 682
           Height = 74
           Align = alTop
           Alignment = taCenter
@@ -211,8 +226,8 @@ object MainForm: TMainForm
         end
         object lblTranscript: TLabel
           Left = 1
-          Top = 147
-          Width = 686
+          Top = 146
+          Width = 682
           Height = 74
           Align = alBottom
           Alignment = taCenter
@@ -232,13 +247,13 @@ object MainForm: TMainForm
     object pge2: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 688
-      Height = 279
+      Width = 684
+      Height = 278
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 688
-        Height = 279
+        Width = 684
+        Height = 278
         Align = alClient
         Color = clInfoBk
         Ctl3D = True
@@ -249,7 +264,7 @@ object MainForm: TMainForm
           Left = 1
           Top = 1
           Width = 130
-          Height = 277
+          Height = 276
           Align = alLeft
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000820000
@@ -2078,5 +2093,10 @@ object MainForm: TMainForm
     OnTimer = tmrEnableActnTimer
     Left = 256
     Top = 189
+  end
+  object tmrSession: TTimer
+    OnTimer = tmrSessionTimer
+    Left = 248
+    Top = 133
   end
 end

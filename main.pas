@@ -83,6 +83,8 @@ type
     ppMain: TPopupMenu;
     Markwordaslearned1: TMenuItem;
     tmrEnableActn: TTimer;
+    pnlSession: TPanel;
+    tmrSession: TTimer;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -128,6 +130,7 @@ type
     procedure tmrStudiedTimer(Sender: TObject);
     procedure tmrEnableActnTimer(Sender: TObject);
     procedure dsOutProgress(Sender: TComponent);
+    procedure tmrSessionTimer(Sender: TObject);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
@@ -138,7 +141,8 @@ type
 
     StudyState, fStudiedAll,
     fChecked, fTotal, fStudied,
-    fStudying, fErrors, PronounceWord:integer;
+    fStudying, fErrors, PronounceWord,
+    SessionTime:integer;
 
     LastTranslation:string;
 
@@ -444,6 +448,14 @@ procedure TMainForm.tmrPauseTimer(Sender: TObject);
 begin
   isPause:=true;
   tmrPause.Enabled:=false;
+end;
+
+procedure TMainForm.tmrSessionTimer(Sender: TObject);
+var t:TDateTime;
+begin
+  Inc(SessionTime);
+  t:=SessionTime/SecsPerDay;
+  pnlSession.Caption:=FormatDateTime('hh:nn', t)+'   ';
 end;
 
 procedure TMainForm.tmrSleepTimer(Sender: TObject);
@@ -1546,9 +1558,8 @@ var
   w:string;
 begin
   if words='' then exit;
+  ExtractStrings([' ',',','?', '/', '(',')'], [], PChar(words), WordList);
   
-  ExtractStrings([' ',',','-','?'], [], PChar(words), WordList);
-
   try
     w:=trim(WordList[PronounceWord]);
     Pronounce(w);
