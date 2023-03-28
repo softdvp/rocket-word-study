@@ -3,8 +3,8 @@ object frmDict: TfrmDict
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Dictionaries'
-  ClientHeight = 502
-  ClientWidth = 853
+  ClientHeight = 501
+  ClientWidth = 849
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,14 +20,12 @@ object frmDict: TfrmDict
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
-    Top = 441
-    Width = 853
+    Top = 440
+    Width = 849
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 440
-    ExplicitWidth = 849
     object btnOk: TBitBtn
       Left = 573
       Top = 6
@@ -61,12 +59,10 @@ object frmDict: TfrmDict
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 853
-    Height = 441
+    Width = 849
+    Height = 440
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 849
-    ExplicitHeight = 440
     object GroupBox1: TGroupBox
       Left = 1
       Top = 1
@@ -342,12 +338,10 @@ object frmDict: TfrmDict
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 476
-    Width = 853
+    Top = 475
+    Width = 849
     Height = 26
     Panels = <>
-    ExplicitTop = 475
-    ExplicitWidth = 849
   end
   object ImageList1: TImageList
     Left = 528

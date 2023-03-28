@@ -18,7 +18,8 @@ uses
   System.Actions, Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.ComCtrls,
   Vcl.ToolWin, JclFileUtils, JvTimer, ACS_Classes, NewACDSAudio, ACS_Vorbis, ShellFileSupport,
   Vcl.AppEvnts, JvExComCtrls, JvComCtrls, JvTabBar, JvPageList, JvExControls, UITypes,
-  Vcl.Imaging.pngimage, ACS_DXAudio, JvComponentBase, JvAppEvent;
+  Vcl.Imaging.pngimage, ACS_DXAudio, JvComponentBase, JvAppEvent, ACS_WinMedia,
+  ACS_smpeg;
 
 type
 
@@ -49,8 +50,7 @@ type
     actRepetition: TAction;
     tmrTimeout: TJvTimer;
     tmrPause: TJvTimer;
-    viOgg: TVorbisIn;
-    dsOut: TDSAudioOut;
+    inOgg: TVorbisIn;
     Continue1: TMenuItem;
     Repeat1: TMenuItem;
     apeMain: TApplicationEvents;
@@ -87,9 +87,10 @@ type
     tmrSession: TTimer;
     btnReset: TButton;
     VbMouse: TVorbisIn;
-    dsMouse: TDSAudioOut;
     aeMain: TApplicationEvents;
-    JvAppEvents1: TJvAppEvents;
+    dxOut: TDXAudioOut;
+    dxMouse: TDXAudioOut;
+    inMP3: TMP3In;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -137,13 +138,12 @@ type
     procedure dsOutProgress(Sender: TComponent);
     procedure tmrSessionTimer(Sender: TObject);
     procedure btnResetClick(Sender: TObject);
-    procedure dsMouseDone(Sender: TComponent);
     procedure aeMainMessage(var Msg: tagMSG; var Handled: Boolean);
+    procedure dxOutDone(Sender: TComponent);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
-    isTimeout, isPause, isFrontShown, isPassed, isStudied,
-    isMouseBusy : boolean;
+    isTimeout, isPause, isFrontShown, isPassed, isStudied:boolean;
 
     IDList: TList<Integer>;
     WordList:TStringList;
@@ -187,7 +187,6 @@ type
     procedure SoundMouseClick;
 
   public
-    SoundBusy: boolean;
     property Dictionary:string write SetDictionary;
     property Total:integer write SetTotal;
     property Checked:integer write SetChecked;
@@ -201,6 +200,7 @@ type
     procedure SetMainPanel;
     procedure NextCard;
     function TranslByNum(s:string; n:integer):string;
+    function AudioBusy:boolean;
 end;
 
 var
@@ -1013,16 +1013,10 @@ begin
   lblTranslate.Caption:='';
 end;
 
-procedure TMainForm.dsMouseDone(Sender: TComponent);
-begin
-  isMouseBusy:=false;
-end;
-
 procedure TMainForm.dsOutDone(Sender: TComponent);
 var
   w:string;
 begin
-  SoundBusy:=false;
   Inc(PronounceWord);
   if PronounceWord<WordList.Count then
   begin
@@ -1039,6 +1033,24 @@ end;
 procedure TMainForm.dsOutProgress(Sender: TComponent);
 begin
   Application.ProcessMessages
+end;
+
+procedure TMainForm.dxOutDone(Sender: TComponent);
+var
+  w:string;
+begin
+  Inc(PronounceWord);
+  if PronounceWord<WordList.Count then
+  begin
+    w:=trim(WordList[PronounceWord]);
+    Pronounce(w);
+  end
+  else
+  begin
+    PronounceWord:=0;
+    WordList.Clear
+  end;
+
 end;
 
 procedure TMainForm.FormActivate(Sender: TObject);
@@ -1149,7 +1161,7 @@ end;
 
 procedure TMainForm.actSoundExecute(Sender: TObject);
 begin
-  if not SoundBusy then
+  if not AudioBusy then
     PronounceWords(LastTranslation);
 end;
 
@@ -1196,6 +1208,11 @@ begin
         r.Right:=r.Left+sbMain.Panels[idx+1].Width;
     end;
   end;
+end;
+
+function TMainForm.AudioBusy: boolean;
+begin
+  Result:=dxOut.Status<>tosIdle;
 end;
 
 procedure TMainForm.btnOkKeyPress(Sender: TObject; var Key: Char);
@@ -1451,15 +1468,22 @@ begin
 end;
 
 procedure TMainForm.ShowFullCard;
+var
+ s:string;
 begin
   try
     if Query.State in [dsInactive] then exit;
 
     lblWord.Caption:=Query.FieldByName('WORD').AsString;
     LastTranslation:=lblWord.Caption;
-    lblTranscript.Caption:='['+Query.FieldByName('TRANSCRIPTION').AsString+']';
+    s:=Query.FieldByName('TRANSCRIPTION').AsString;
+
+    if Trim(s) <>''  then
+      lblTranscript.Caption:='['+s+']'
+    else lblTranscript.Caption:='';
+
     lblTranslate.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
-    if not SoundBusy then
+    if not AudioBusy then
       PronounceWords(lblWord.Caption);
   except
 
@@ -1476,7 +1500,7 @@ begin
     lblWord.Caption:=Query.FieldByName('WORD').AsString;
     LastTranslation:=lblWord.Caption;
 
-    if not SoundBusy then
+    if not AudioBusy then
       PronounceWords(lblWord.Caption);
   except
 
@@ -1490,11 +1514,11 @@ begin
 
 {$IFDEF MOUSECLICK}
 
-  if isMouseBusy then exit;
+  if dxMouse.Status<tosIdle then exit;
+
 
   vbMouse.FileName:=g_MsClickSound;
-  isMouseBusy:=true;
-  dsMouse.Run;
+  dxMouse.Run;
 
 {$ENDIF}
 
@@ -1514,9 +1538,15 @@ begin
 end;
 
 procedure TMainForm.ShowTranscript;
+var
+  s:string;
 begin
   try
-    lblTranscript.Caption:='['+Query.FieldByName('TRANSCRIPTION').AsString+']';
+    s:=Query.FieldByName('TRANSCRIPTION').AsString;
+    if Trim(s)<>'' then
+      lblTranscript.Caption:='['+Query.FieldByName('TRANSCRIPTION').AsString+']'
+    else lblTranscript.Caption:='';
+
   except
   on E: Exception do
     ShowMessage('ShowTranscript: '+E.Message);
@@ -1645,10 +1675,11 @@ end;
 procedure TMainForm.Pronounce;
 var
   Path, FN: string;
+  CanPronounce:boolean;
 begin
   with dm do
   begin
-    if dsOut.Status = tosPlaying then exit;
+    if dxOut.Status <> tosIdle then exit;
 
     if qrOptions.FieldByName('PRONOUNCE').AsBoolean then
     begin
@@ -1657,16 +1688,37 @@ begin
       if JclFileUtils.PathIsAbsolute(Path) then
           Path:=IncludeTrailingPathDelimiter(PathSearchAndQualify(qrOptions.FieldByName('SOUNDLIB').AsString))
       else Path:=IncludeTrailingPathDelimiter(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+Path);
+
+      CanPronounce:=false;
+
       FN:=Path+word+'.ogg';
 
       if FileExists(FN) then
       begin
-        viOgg.FileName:=FN;
+        dxOut.Input:=inOgg;
+        inOgg.FileName:=FN;
 
-        if not SoundBusy then
+        CanPronounce:=inOgg.Valid;
+      end
+      else
+      begin
+        FN:=Path+word+'.mp3';
+
+        if FileExists(FN) then
         begin
-          SoundBusy:=true;
-          dsOut.Run;
+          dxOut.Input:=inMP3;
+          inMP3.FileName:=FN;
+
+          CanPronounce:=inMP3.Valid;
+        end;
+      end;
+
+      if CanPronounce then
+      begin
+        if not AudioBusy then
+        begin
+          if dxOut.Status <> tosIdle then exit;
+          dxOut.Run;
         end;
       end
       else

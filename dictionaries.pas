@@ -1,6 +1,6 @@
 ﻿(*
 		This Source Code Form is subject to the terms of the MIT
-		License. 
+		License.
 
 		Copyright (c) 2023 Oleg Popov
 		Copyright (c) 2023 Rocket Technologies (https://www.rockettech.com)
@@ -16,7 +16,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Data.DB, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,FireDAC.Stan.Param, IOUtils,
   Vcl.DBCtrls, System.ImageList, Vcl.ImgList, RegularExpressions, JvDialogs,
-  Vcl.ExtDlgs, Vcl.ComCtrls, Ex_Grid, Ex_DBGrid, System.Actions, Vcl.ActnList;
+  Vcl.ExtDlgs, Vcl.ComCtrls, Ex_Grid, Ex_DBGrid, System.Actions, Vcl.ActnList, ACS_DXAudio;
 
 const
   IsChecked : array[Boolean] of Integer =
@@ -92,8 +92,6 @@ type
     procedure dbgWordsDblClick(Sender: TObject);
   private
     LastWord : string;
-//    IsSound : boolean;
-
     function GetFilterStr: string;
     function GetSelectredFilter: string;
     procedure SetFilter;
@@ -146,7 +144,6 @@ end;
 
 procedure TfrmDict.btnCancelClick(Sender: TObject);
 begin
-//  IsSound:=false;
   dbgDict.BeginUpdate;
 
   with dm do
@@ -595,7 +592,7 @@ begin
   word:=dm.qrWords.FieldByName('WORD').AsString;
   LastWord:=word;
 
-  if not MainForm.SoundBusy and (*isSound and*) dbgWords.Focused then
+  if (not MainForm.AudioBusy) and dbgWords.Focused then
     MainForm.PronounceWords(word);
 
 end;
@@ -607,8 +604,6 @@ begin
     qrWords.Edit;
     qrWords['SELECTED']:=not qrWords['SELECTED'];
     qrWords.Post;
-
-    //dbgWords.InvalidateCell(GridCell(0, Cell.Row));
   end;
 end;
 
@@ -655,7 +650,7 @@ begin
       LastWord:=word;
       dbgWords.DataSource.DataSet.Prior;
 
-      if not MainForm.SoundBusy and dbgWords.Focused then
+      if (*not MainForm.SoundBusy*) (not MainForm.AudioBusy) and dbgWords.Focused then
         MainForm.PronounceWords(word);
     end;
 
@@ -667,8 +662,8 @@ begin
       LastWord:=word;
       dbgWords.DataSource.DataSet.Next;
 
-      if not MainForm.SoundBusy and dbgWords.Focused then
-      MainForm.PronounceWords(word);
+      if (not MainForm.AudioBusy) and dbgWords.Focused then
+        MainForm.PronounceWords(word);
     end;
   end;
 end;
@@ -680,8 +675,6 @@ end;
 
 procedure TfrmDict.FormActivate(Sender: TObject);
 begin
-  //IsSound:=true;
-  MainForm.SoundBusy:=false;
   frmDict.SetFocusedControl(btnOk);
 
   with dm do
@@ -710,8 +703,7 @@ procedure TfrmDict.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   case Key of
     VK_F2:
-      //   if isSound then
-      if not MainForm.SoundBusy then
+      if not MainForm.AudioBusy then
         MainForm.PronounceWords(LastWord);
   end;
 end;
@@ -777,8 +769,7 @@ end;
 
 procedure TfrmDict.SpeedButton1Click(Sender: TObject);
 begin
-//   if isSound then
-  if not MainForm.SoundBusy then
+  if not MainForm.AudioBusy then
     MainForm.PronounceWords(LastWord);
 end;
 

@@ -2046,22 +2046,11 @@ object MainForm: TMainForm
     Left = 176
     Top = 133
   end
-  object viOgg: TVorbisIn
+  object inOgg: TVorbisIn
     Loop = False
     EndSample = -1
     StartSample = 0
     Left = 80
-    Top = 32
-  end
-  object dsOut: TDSAudioOut
-    Input = viOgg
-    OnDone = dsOutDone
-    OnProgress = dsOutProgress
-    DeviceNumber = 0
-    Calibrate = False
-    Latency = 100
-    SpeedFactor = 1.000000000000000000
-    Left = 120
     Top = 32
   end
   object apeMain: TApplicationEvents
@@ -2119,24 +2108,41 @@ object MainForm: TMainForm
     Left = 352
     Top = 56
   end
-  object dsMouse: TDSAudioOut
-    Input = VbMouse
-    OnDone = dsMouseDone
-    OnProgress = dsOutProgress
-    DeviceNumber = 0
-    Calibrate = False
-    Latency = 100
-    SpeedFactor = 1.000000000000000000
-    Left = 424
-    Top = 56
-  end
   object aeMain: TApplicationEvents
     OnMessage = aeMainMessage
     Left = 424
     Top = 141
   end
-  object JvAppEvents1: TJvAppEvents
-    Left = 600
-    Top = 125
+  object dxOut: TDXAudioOut
+    Input = VbMouse
+    OnDone = dxOutDone
+    DeviceNumber = 0
+    Latency = 100
+    PrefetchData = True
+    PollingInterval = 100
+    FramesInBuffer = 24576
+    SpeedFactor = 1.000000000000000000
+    Left = 80
+    Top = 93
+  end
+  object dxMouse: TDXAudioOut
+    Input = VbMouse
+    DeviceNumber = 0
+    Latency = 100
+    PrefetchData = True
+    PollingInterval = 100
+    FramesInBuffer = 24576
+    SpeedFactor = 1.000000000000000000
+    Left = 408
+    Top = 57
+  end
+  object inMP3: TMP3In
+    Loop = False
+    EndSample = -1
+    StartSample = 0
+    HighPrecision = False
+    OutputChannels = cnMonoOrStereo
+    Left = 128
+    Top = 29
   end
 end
