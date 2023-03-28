@@ -22,7 +22,9 @@ type
     btnRepeat: TButton;
     Panel2: TPanel;
     Label1: TLabel;
+    tmrRun: TTimer;
     procedure btnRepeatClick(Sender: TObject);
+    procedure tmrRunTimer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -40,6 +42,12 @@ uses main;
 
 procedure TdlgAllStudy.btnRepeatClick(Sender: TObject);
 begin
+  tmrRun.Enabled:=true;
+end;
+
+procedure TdlgAllStudy.tmrRunTimer(Sender: TObject);
+begin
+  tmrRun.Enabled:=false;
   MainForm.actRepeat.Execute;
 end;
 

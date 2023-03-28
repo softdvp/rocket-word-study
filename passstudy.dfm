@@ -21,7 +21,7 @@ object dlgPassStudy: TdlgPassStudy
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 47
+    ExplicitTop = 52
     ExplicitWidth = 354
     DesignSize = (
       358
@@ -60,7 +60,7 @@ object dlgPassStudy: TdlgPassStudy
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 354
-    ExplicitHeight = 47
+    ExplicitHeight = 52
     object Label1: TLabel
       Left = 35
       Top = 20
@@ -68,5 +68,12 @@ object dlgPassStudy: TdlgPassStudy
       Height = 13
       Caption = 'Would you like study omitted words?'
     end
+  end
+  object tmrRun: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = tmrRunTimer
+    Left = 304
+    Top = 8
   end
 end

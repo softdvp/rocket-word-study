@@ -22,7 +22,9 @@ type
     btnStudy: TButton;
     Panel2: TPanel;
     Label1: TLabel;
+    tmrRun: TTimer;
     procedure btnStudyClick(Sender: TObject);
+    procedure tmrRunTimer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -40,6 +42,12 @@ uses main;
 
 procedure TdlgPassStudy.btnStudyClick(Sender: TObject);
 begin
+  tmrRun.Enabled:=true;
+end;
+
+procedure TdlgPassStudy.tmrRunTimer(Sender: TObject);
+begin
+  tmrRun.Enabled:=false;
   MainForm.actStudyOmitted.Execute;
 end;
 

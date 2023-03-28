@@ -3,8 +3,8 @@ object dlgStopRepeat: TdlgStopRepeat
   Top = 0
   BorderStyle = bsDialog
   Caption = 'All words have been repeated!'
-  ClientHeight = 97
-  ClientWidth = 437
+  ClientHeight = 96
+  ClientWidth = 433
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,19 +15,17 @@ object dlgStopRepeat: TdlgStopRepeat
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 46
-    Width = 437
+    Top = 45
+    Width = 433
     Height = 51
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 47
-    ExplicitWidth = 346
     DesignSize = (
-      437
+      433
       51)
     object btnStudy: TButton
-      Left = 116
+      Left = 108
       Top = 13
       Width = 75
       Height = 25
@@ -39,7 +37,7 @@ object dlgStopRepeat: TdlgStopRepeat
       OnClick = btnStudyClick
     end
     object btnCancel: TButton
-      Left = 261
+      Left = 253
       Top = 13
       Width = 75
       Height = 25
@@ -50,7 +48,7 @@ object dlgStopRepeat: TdlgStopRepeat
       TabOrder = 2
     end
     object btnRepeat: TButton
-      Left = 26
+      Left = 18
       Top = 13
       Width = 75
       Height = 25
@@ -65,11 +63,10 @@ object dlgStopRepeat: TdlgStopRepeat
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 437
-    Height = 46
+    Width = 433
+    Height = 45
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 65
     object Label1: TLabel
       Left = 26
       Top = 16
@@ -77,5 +74,12 @@ object dlgStopRepeat: TdlgStopRepeat
       Height = 13
       Caption = 'Would you like either to study new words or repeat studied ones?'
     end
+  end
+  object tmrRun: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = tmrRunTimer
+    Left = 152
+    Top = 48
   end
 end

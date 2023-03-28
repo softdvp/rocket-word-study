@@ -16,6 +16,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls;
 
 type
+  TRun = (runStudy, runRepeat);
+
   TdlgStopRepeat = class(TForm)
     btnStudy: TButton;
     Panel1: TPanel;
@@ -23,10 +25,13 @@ type
     Panel2: TPanel;
     Label1: TLabel;
     btnRepeat: TButton;
+    tmrRun: TTimer;
     procedure btnStudyClick(Sender: TObject);
     procedure btnRepeatClick(Sender: TObject);
+    procedure tmrRunTimer(Sender: TObject);
   private
     { Private declarations }
+    Run:TRun;
   public
     { Public declarations }
   end;
@@ -42,12 +47,25 @@ uses main;
 
 procedure TdlgStopRepeat.btnRepeatClick(Sender: TObject);
 begin
-  MainForm.actRepeat.Execute;
+  Run:=runRepeat;
+  tmrRun.Enabled:=true;
 end;
 
 procedure TdlgStopRepeat.btnStudyClick(Sender: TObject);
 begin
-  MainForm.actLearn.Execute;
+  Run:=runStudy;
+  tmrRun.Enabled:=true;
+end;
+
+procedure TdlgStopRepeat.tmrRunTimer(Sender: TObject);
+begin
+ tmrRun.Enabled:=false;
+
+  case Run of
+    runStudy:  MainForm.actLearn.Execute;
+    runRepeat: MainForm.actRepeat.Execute;
+  end;
+
 end;
 
 end.

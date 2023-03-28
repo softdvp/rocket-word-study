@@ -3,8 +3,8 @@ object dlgStopStudy: TdlgStopStudy
   Top = 0
   BorderStyle = bsDialog
   Caption = 'All current words are studied!'
-  ClientHeight = 101
-  ClientWidth = 416
+  ClientHeight = 100
+  ClientWidth = 412
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,19 +15,17 @@ object dlgStopStudy: TdlgStopStudy
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 50
-    Width = 416
+    Top = 49
+    Width = 412
     Height = 51
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 44
-    ExplicitWidth = 412
     DesignSize = (
-      416
+      412
       51)
     object btnCancel: TButton
-      Left = 271
+      Left = 263
       Top = 14
       Width = 75
       Height = 25
@@ -36,10 +34,9 @@ object dlgStopStudy: TdlgStopStudy
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 267
     end
     object btnRepeat: TButton
-      Left = 31
+      Left = 23
       Top = 14
       Width = 75
       Height = 24
@@ -49,10 +46,9 @@ object dlgStopStudy: TdlgStopStudy
       ModalResult = 1
       TabOrder = 0
       OnClick = btnRepeatClick
-      ExplicitLeft = 27
     end
     object btnStudy: TButton
-      Left = 128
+      Left = 120
       Top = 14
       Width = 75
       Height = 25
@@ -62,18 +58,15 @@ object dlgStopStudy: TdlgStopStudy
       ModalResult = 1
       TabOrder = 2
       OnClick = btnStudyClick
-      ExplicitLeft = 124
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 416
-    Height = 50
+    Width = 412
+    Height = 49
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 412
-    ExplicitHeight = 44
     object Label1: TLabel
       Left = 35
       Top = 18
@@ -81,5 +74,12 @@ object dlgStopStudy: TdlgStopStudy
       Height = 13
       Caption = 'Would you like either to study new words or repeat studied ones?'
     end
+  end
+  object tmrRun: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = tmrRunTimer
+    Left = 152
+    Top = 48
   end
 end
