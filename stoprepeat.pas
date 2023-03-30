@@ -26,9 +26,11 @@ type
     Label1: TLabel;
     btnRepeat: TButton;
     tmrRun: TTimer;
+    lbNote: TLabel;
     procedure btnStudyClick(Sender: TObject);
     procedure btnRepeatClick(Sender: TObject);
     procedure tmrRunTimer(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
     Run:TRun;
@@ -55,6 +57,31 @@ procedure TdlgStopRepeat.btnStudyClick(Sender: TObject);
 begin
   Run:=runStudy;
   tmrRun.Enabled:=true;
+end;
+
+procedure TdlgStopRepeat.FormActivate(Sender: TObject);
+var
+  t: TDateTime;
+begin
+  btnRepeat.Enabled:=true;
+  lbNote.Caption:='';
+
+  with MainForm do
+  begin
+    t:=StudyMinTime;
+
+    if t-Now>0 then
+    begin
+      btnRepeat.Enabled:=false;
+      lbNote.Caption:=DiffTimeString(t)
+    end
+    else if t=0 then
+    begin
+      btnRepeat.Enabled:=false;
+      lbNote.Caption:='Note: Please click "Study"'
+    end;
+
+  end;
 end;
 
 procedure TdlgStopRepeat.tmrRunTimer(Sender: TObject);

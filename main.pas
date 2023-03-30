@@ -201,6 +201,10 @@ type
     procedure NextCard;
     function TranslByNum(s:string; n:integer):string;
     function AudioBusy:boolean;
+    function CheckLearn: boolean;
+    function CheckRepeat: boolean;
+    function DiffTimeString(t: TDateTime): string;
+    function StudyMinTime: TDateTime;
 end;
 
 var
@@ -296,8 +300,8 @@ begin
 
   with dm do
   begin
-
     qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE=0';
+    qrMisc.ParamByName('ID').AsInteger:=qrOptions['DICTIONARY'];
     qrMisc.Open;
 
     if qrMisc['CNT']=0 then
@@ -315,6 +319,7 @@ begin
       end;
 
       dlgAllStudy.ShowModal;
+
       exit;
     end;
   end;
@@ -336,6 +341,7 @@ begin
   with dm do
   begin
     qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE<>'+IntToStr(g_Studied);
+    qrMisc.ParamByName('ID').AsInteger:=qrOptions['DICTIONARY'];
     qrMisc.Open;
 
     if qrMisc['CNT']=0 then
@@ -1727,6 +1733,133 @@ begin
         WordList.Clear
       end;
     end;
+  end;
+end;
+
+function TMainForm.DiffTimeString(t: TDateTime): string;
+const
+  Note='Note: Words will be available to repeat in ';
+var
+  t1:TDateTime;
+  d, h, m, s, ds, hs, ms, ss: string;
+  di, hi, mi, si, msi:word;
+begin
+  t1:=t-Now;
+
+  DecodeTime(t1, hi, mi, si, msi);
+
+  Result:=Note;
+
+  d:=IntToStr(DaysBetween(Now, t));
+  di:=StrToInt(d);
+  h:=FormatDateTime('h', t1);
+  m:=FormatDateTime('n', t1);
+  s:=FormatDateTime('s', t1);
+
+  if di=1 then ds:=' day '
+  else ds:=' days ';
+
+  if hi=1 then
+    hs:=' hour '
+  else hs:=' hours ';
+
+  if mi=1 then
+    ms:=' minute '
+  else ms:=' minutes ';
+
+  if si=1 then
+    ss:=' second '
+  else ss:=' seconds ';
+
+
+  if di>0 then
+    Result:=Result + d +ds;
+
+  if hi>0 then
+    Result:=Result + h +hs;
+
+  if mi>0 then
+    Result:=Result + m +ms;
+
+  if (di=0) and (hi=0) and (mi=0) then
+    Result:= Result+s+ss
+
+end;
+
+function TMainForm.StudyMinTime: TDateTime;
+begin
+  with dm do
+  begin
+    qrMisc.SQL.Text:='SELECT * FROM WORDS WHERE DICTID=:DICTID AND STATE>0 and STATE<100 ORDER BY DATETIME';
+    qrMisc.ParamByName('DICTID').AsInteger:=qrOptions['DICTIONARY'];
+    qrMisc.Open;
+    Result:=qrMisc.FieldByName('DATETIME').AsDateTime;
+    qrMisc.Close;
+  end;
+end;
+
+function TMainForm.CheckLearn: boolean;
+begin
+  Result:=true;
+  with dm do
+  begin
+
+    qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE=0';
+    qrMisc.Open;
+
+    if qrMisc['CNT']=0 then
+    begin
+      qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE='+
+        IntToStr(g_Passed);
+      qrMisc.Open;
+
+      if qrMisc['CNT']>0 then
+      begin
+        dlgPassStudy.ShowModal;
+        Result:=false;
+        exit;
+      end
+      else
+      begin
+        dlgAllStudy.ShowModal;
+        Result:=false;
+        exit;
+      end;
+      qrMisc.Close
+    end;
+  end;
+end;
+
+function TMainForm.CheckRepeat: boolean;
+var
+  DiffTime:TDateTime;
+
+begin
+  Result:=true;
+
+  with dm do
+  begin
+    qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE<>'+IntToStr(g_Studied);
+    qrMisc.Open;
+
+    if qrMisc['CNT']=0 then
+    begin
+      ShowMessage('All words are studied and repeated!'+#13#10+'Please select another dictionary');
+      Result:=false;
+      exit;
+    end
+    else
+    begin
+      DiffTime:=StudyMinTime;
+
+      if DiffTime>0 then
+      begin
+        ShowMessage('Words will be available to study in '+DiffTimeString(DiffTime));
+        Result:=false;
+      end;
+
+    end;
+    qrMisc.Close
   end;
 end;
 

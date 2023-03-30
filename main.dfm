@@ -30,7 +30,7 @@ object MainForm: TMainForm
     Caption = 'ToolBar2'
     Images = imgMain
     TabOrder = 0
-    ExplicitWidth = 680
+    ExplicitWidth = 672
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -138,8 +138,8 @@ object MainForm: TMainForm
       end>
     ParentShowHint = False
     ShowHint = True
-    ExplicitTop = 306
-    ExplicitWidth = 680
+    ExplicitTop = 304
+    ExplicitWidth = 672
   end
   object plMain: TJvPageList
     Left = 0
@@ -149,28 +149,28 @@ object MainForm: TMainForm
     ActivePage = pge1
     PropagateEnable = False
     Align = alClient
-    ExplicitWidth = 680
-    ExplicitHeight = 277
+    ExplicitWidth = 672
+    ExplicitHeight = 275
     object pge1: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 684
-      Height = 278
-      ExplicitWidth = 680
-      ExplicitHeight = 277
+      Width = 676
+      Height = 276
+      ExplicitWidth = 672
+      ExplicitHeight = 275
       object pnlOk: TPanel
         Left = 0
-        Top = 221
-        Width = 684
+        Top = 219
+        Width = 676
         Height = 57
         Align = alBottom
         TabOrder = 0
-        ExplicitTop = 220
-        ExplicitWidth = 680
+        ExplicitTop = 218
+        ExplicitWidth = 672
         object btnOk: TButton
           Left = 1
           Top = 1
-          Width = 682
+          Width = 674
           Height = 55
           Align = alClient
           Caption = 'Continue'
@@ -183,27 +183,27 @@ object MainForm: TMainForm
           ParentFont = False
           TabOrder = 0
           Visible = False
-          ExplicitWidth = 678
+          ExplicitWidth = 670
         end
       end
       object pnlMain: TPanel
         Left = 0
         Top = 0
-        Width = 684
-        Height = 221
+        Width = 676
+        Height = 219
         Align = alClient
         Color = clWindow
         ParentBackground = False
         PopupMenu = ppMain
         TabOrder = 1
         OnClick = pnlMainClick
-        ExplicitWidth = 680
-        ExplicitHeight = 220
+        ExplicitWidth = 672
+        ExplicitHeight = 218
         object lblWord: TLabel
           Left = 1
           Top = 75
-          Width = 682
-          Height = 71
+          Width = 674
+          Height = 69
           Align = alClient
           Alignment = taCenter
           AutoSize = False
@@ -222,7 +222,7 @@ object MainForm: TMainForm
         object lblTranslate: TLabel
           Left = 1
           Top = 1
-          Width = 682
+          Width = 674
           Height = 74
           Align = alTop
           Alignment = taCenter
@@ -239,8 +239,8 @@ object MainForm: TMainForm
         end
         object lblTranscript: TLabel
           Left = 1
-          Top = 146
-          Width = 682
+          Top = 144
+          Width = 674
           Height = 74
           Align = alBottom
           Alignment = taCenter
@@ -260,13 +260,13 @@ object MainForm: TMainForm
     object pge2: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 684
-      Height = 278
+      Width = 676
+      Height = 276
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 684
-        Height = 278
+        Width = 676
+        Height = 276
         Align = alClient
         Color = clInfoBk
         Ctl3D = True
@@ -277,7 +277,7 @@ object MainForm: TMainForm
           Left = 1
           Top = 1
           Width = 130
-          Height = 276
+          Height = 274
           Align = alLeft
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000820000
