@@ -35,7 +35,7 @@ type
     alMain: TActionList;
     actDict: TAction;
     actOptions: TAction;
-    ToolBar2: TToolBar;
+    tbMain: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     imgMain: TImageList;
@@ -64,7 +64,7 @@ type
     lblWord: TLabel;
     lblTranslate: TLabel;
     lblTranscript: TLabel;
-    Panel1: TPanel;
+    pnlSlip: TPanel;
     llStudy: TLinkLabel;
     llRepeat: TLinkLabel;
     llDict: TLinkLabel;
@@ -91,6 +91,10 @@ type
     dxOut: TDXAudioOut;
     dxMouse: TDXAudioOut;
     inMP3: TMP3In;
+    lblWordS: TLabel;
+    lbTranslateS: TLabel;
+    lblTranscriptS: TLabel;
+    tmrSlip: TTimer;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -140,6 +144,7 @@ type
     procedure btnResetClick(Sender: TObject);
     procedure aeMainMessage(var Msg: tagMSG; var Handled: Boolean);
     procedure dxOutDone(Sender: TComponent);
+    procedure tmrSlipTimer(Sender: TObject);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
@@ -185,6 +190,12 @@ type
     procedure SetRepeatNextLevel(Query: TFDQuery);
     procedure StudyBackCard(Query: TFDQuery);
     procedure SoundMouseClick;
+    procedure ClearCardS;
+    procedure ShowTranslateS(Query: TFDQuery);
+    procedure ShowTranscriptS(Query: TFDQuery);
+    procedure ShowWordS(Query: TFDQuery);
+    procedure SlipCard;
+    procedure ShowFullCardS(Query: TFDQuery);
 
   public
     property Dictionary:string write SetDictionary;
@@ -198,7 +209,6 @@ type
     procedure PronounceWords(words: string);
 
     procedure SetMainPanel;
-    procedure NextCard;
     function TranslByNum(s:string; n:integer):string;
     function AudioBusy:boolean;
     function CheckLearn: boolean;
@@ -300,7 +310,9 @@ begin
 
   with dm do
   begin
-    qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND STATE=0';
+    qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1 AND (STATE=0 OR STATE='
+    +IntToStr(g_Learning)+')';
+
     qrMisc.ParamByName('ID').AsInteger:=qrOptions['DICTIONARY'];
     qrMisc.Open;
 
@@ -479,6 +491,23 @@ begin
   tmrSleep.Enabled:=false;
 end;
 
+procedure TMainForm.tmrSlipTimer(Sender: TObject);
+var
+  deltaX:integer;
+begin
+  deltaX:=Round(pnlSlip.Width / (tmrSlip.Tag / tmrSlip.Interval));
+  pnlSlip.Left := pnlSlip.Left + deltaX;
+
+  if (pnlSlip.Left) >= 0 then
+  begin
+    // At the end of the timer, set the position of Panel2 to fully cover Panel1
+    pnlSlip.Left := 0;
+    tmrSlip.Enabled := False;
+    pnlslip.Width:=0;
+  end;
+
+end;
+
 procedure TMainForm.tmrStudiedTimer(Sender: TObject);
 begin
   btnOk.Action.Execute;
@@ -488,6 +517,12 @@ procedure TMainForm.tmrTimeoutTimer(Sender: TObject);
 begin
   isTimeout:=true;
   tmrTimeout.Enabled:=false;
+
+  ClearCardS;
+  ShowFullCardS(dm.qrRepeat);
+  pnlSlip.Color:=pnlMain.Color;
+  SlipCard;
+
   ClearCard;
   ShowFullCard(dm.qrRepeat);
 end;
@@ -614,6 +649,12 @@ begin
       Run;
       tmrPass.Enabled:=false;
       tmrPass.Enabled:=true;
+
+      ClearCardS;
+      ShowFullCardS(qrStudy);
+      pnlSlip.Color:=pnlMain.Color;
+      SlipCard;
+
       ClearCard;
       ShowFullCard(qrStudy)
     end
@@ -691,6 +732,7 @@ begin
         else CurLevel:=CurLevel+1;
 
         NextLevel:=CurLevel;
+
         RepeatFrontBack(qrRepeat)
       end;
     end
@@ -773,6 +815,24 @@ begin
   timest:=Query['REPEATTRANS'];
   timesw:=Query['REPEATWORD'];
 
+  ClearCardS;
+
+  if (timest>=timesw) then
+  begin
+    ClearCardS;
+    ShowTranslateS(Query)
+  end
+  else
+    if timesw>0 then
+    begin
+      ClearCardS;
+      ShowTranscriptS(Query);
+      ShowWordS(Query);
+    end;
+
+  pnlSlip.Color:=pnlMain.Color;
+  SlipCard;
+
   if (timest>=timesw) then
   begin
     ClearCard;
@@ -792,6 +852,16 @@ begin
   tmrPause.Enabled:=true;
 end;
 
+procedure TMainForm.SlipCard;
+begin
+  pnlSlip.Left := -pnlMain.Width;
+  pnlSlip.Width := pnlMain.Width;
+  tmrSlip.Enabled:=true;
+
+  while tmrSlip.Enabled do
+    Application.ProcessMessages;
+end;
+
 procedure TMainForm.StudyFrontCard;
 var
   timest, timesw: integer;
@@ -800,9 +870,29 @@ begin
     if isAbort then exit;
     if not Query.Active then exit;
 
-    pnlMain.Color:=clWindow;
     timest:=Query['REPEATTRANS'];
     timesw:=Query['REPEATWORD'];
+
+    ClearCardS;
+
+    if (timest>=timesw) then
+    begin
+      ClearCardS;
+      ShowTranslateS(Query)
+    end
+    else
+    begin
+      if timesw>0 then
+      begin
+        ClearCardS;
+        ShowTranscriptS(Query);
+        ShowWordS(Query);
+      end
+    end;
+
+    pnlSlip.Color:=clWindow;
+    SlipCard;
+    pnlMain.Color:=clWindow;
 
     if (timest>=timesw) then
     begin
@@ -1012,6 +1102,14 @@ begin
   sbMain.Panels[6].Text:=IntToStr(v);
 end;
 
+procedure TMainForm.ClearCardS;
+begin
+  lblWordS.Caption:='';
+  lblTranscriptS.Caption:='';
+  lbTranslateS.Caption:='';
+end;
+
+
 procedure TMainForm.ClearCard;
 begin
   lblWord.Caption:='';
@@ -1071,6 +1169,15 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+
+  pnlSlip.Top:=tbMain.Height;
+  pnlSlip.Width := pnlMain.Width;
+  pnlSlip.Height := pnlMain.Height;
+  pnlSlip.BorderStyle:=bsSingle;
+
+  // Set initial position of Panel2 to be off-screen to the right of pnlMain
+  pnlSlip.Left := -pnlMain.Width;
+
   IDList:=TList<integer>.Create;
   WordList := TStringList.Create;
 
@@ -1240,28 +1347,6 @@ begin
   fmAbout.ShowModal;
 end;
 
-procedure TMainForm.NextCard;
-var
-  LastColor:integer;
-begin
-
-  ClearCard;
-  LastColor:=pnlMain.Color;
-  pnlMain.Color:=clSilver;
-  Application.ProcessMessages;
-
-  tmrSleep.Enabled:=false;
-  tmrSleep.Interval:=100;
-  tmrSleep.Enabled:=true;
-
-  while tmrSleep.Enabled do
-  begin
-    Application.ProcessMessages;
-  end;
-
-  pnlMain.Color:=LastColor;
-end;
-
 procedure TMainForm.actStudyExecute(Sender: TObject);
 var
   Id, Idx: integer;
@@ -1321,6 +1406,12 @@ begin
       begin
         tmrPass.Enabled:=false;
         tmrPass.Enabled:=true;
+
+        ClearCardS;
+        ShowFullCardS(qrStudy);
+        pnlSlip.Color:=pnlMain.Color;
+        SlipCard;
+
         ClearCard;
         ShowFullCard(qrStudy);
       end;
@@ -1362,12 +1453,13 @@ begin
       begin
         Stop;
         Inc(StudyState);
+
         StartStudy
       end
       else
       begin
         qrStudy.Locate('ID', Id);
-        NextCard;
+
         StudyFrontCard(qrStudy)
       end
     end;
@@ -1473,6 +1565,28 @@ begin
     end;
 end;
 
+procedure TMainForm.ShowFullCardS;
+var
+ s:string;
+begin
+  try
+    if Query.State in [dsInactive] then exit;
+
+    lblWordS.Caption:=Query.FieldByName('WORD').AsString;
+    s:=Query.FieldByName('TRANSCRIPTION').AsString;
+
+    if Trim(s) <>''  then
+      lblTranscriptS.Caption:='['+s+']'
+    else lblTranscriptS.Caption:='';
+
+    lbTranslateS.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
+  except
+
+  on E: Exception do
+    ShowMessage('ShowFullCard: '+E.Message);
+  end;
+end;
+
 procedure TMainForm.ShowFullCard;
 var
  s:string;
@@ -1497,6 +1611,20 @@ begin
     ShowMessage('ShowFullCard: '+E.Message);
   end;
 end;
+
+procedure TMainForm.ShowWordS;
+begin
+  if Query.State in [dsInactive] then exit;
+
+  try
+    lblWordS.Caption:=Query.FieldByName('WORD').AsString;
+
+  except
+  on E: Exception do
+    ShowMessage('ShowWord: '+E.Message);
+  end;
+end;
+
 
 procedure TMainForm.ShowWord;
 begin
@@ -1530,6 +1658,20 @@ begin
 
 end;
 
+procedure TMainForm.ShowTranslateS;
+begin
+  if Query.State in [dsInactive] then exit;
+  try
+    lblWordS.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
+  except
+
+  on E: Exception do
+    ShowMessage('ShowTranslate: '+E.Message);
+  end;
+
+end;
+
+
 procedure TMainForm.ShowTranslate;
 begin
   if Query.State in [dsInactive] then exit;
@@ -1541,6 +1683,22 @@ begin
     ShowMessage('ShowTranslate: '+E.Message);
   end;
 
+end;
+
+procedure TMainForm.ShowTranscriptS;
+var
+  s:string;
+begin
+  try
+    s:=Query.FieldByName('TRANSCRIPTION').AsString;
+    if Trim(s)<>'' then
+      lblTranscriptS.Caption:='['+Query.FieldByName('TRANSCRIPTION').AsString+']'
+    else lblTranscriptS.Caption:='';
+
+  except
+  on E: Exception do
+    ShowMessage('ShowTranscript: '+E.Message);
+  end;
 end;
 
 procedure TMainForm.ShowTranscript;
@@ -1559,7 +1717,6 @@ begin
   end;
 
 end;
-
 
 procedure TMainForm.Run;
 begin

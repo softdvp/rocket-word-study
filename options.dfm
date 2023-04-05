@@ -83,14 +83,14 @@ object frmOptions: TfrmOptions
     Left = 24
     Top = 136
     Width = 561
-    Height = 308
+    Height = 289
     Caption = 'Study and Repeat'
     TabOrder = 4
     object DBGrid1: TDBGrid
       Left = 2
       Top = 17
       Width = 557
-      Height = 248
+      Height = 229
       Align = alClient
       DataSource = dm.dsLevels
       TabOrder = 0
@@ -138,11 +138,15 @@ object frmOptions: TfrmOptions
     end
     object Panel1: TPanel
       Left = 2
-      Top = 265
+      Top = 246
       Width = 557
       Height = 41
       Align = alBottom
+      BevelOuter = bvNone
       TabOrder = 1
+      ExplicitLeft = 26
+      ExplicitTop = 202
+      ExplicitWidth = 534
       object btnDel: TButton
         Left = 432
         Top = 8

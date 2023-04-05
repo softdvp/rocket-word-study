@@ -22,7 +22,7 @@ object dlgStopStudy: TdlgStopStudy
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 48
+    ExplicitTop = 86
     ExplicitWidth = 408
     DesignSize = (
       412
@@ -74,7 +74,7 @@ object dlgStopStudy: TdlgStopStudy
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
-    ExplicitHeight = 48
+    ExplicitHeight = 86
     object Label1: TLabel
       Left = 35
       Top = 18

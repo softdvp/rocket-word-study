@@ -1,6 +1,7 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Rocket Word Study '
   ClientHeight = 338
@@ -21,13 +22,13 @@ object MainForm: TMainForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   TextHeight = 15
-  object ToolBar2: TToolBar
+  object tbMain: TToolBar
     Left = 0
     Top = 0
     Width = 676
     Height = 29
     ButtonHeight = 28
-    Caption = 'ToolBar2'
+    Caption = 'tbMain'
     Images = imgMain
     TabOrder = 0
     ExplicitWidth = 672
@@ -192,6 +193,7 @@ object MainForm: TMainForm
         Width = 676
         Height = 219
         Align = alClient
+        BorderStyle = bsSingle
         Color = clWindow
         ParentBackground = False
         PopupMenu = ppMain
@@ -202,11 +204,12 @@ object MainForm: TMainForm
         object lblWord: TLabel
           Left = 1
           Top = 75
-          Width = 674
-          Height = 69
+          Width = 670
+          Height = 65
           Align = alClient
           Alignment = taCenter
           AutoSize = False
+          Caption = 'Word'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -37
@@ -222,11 +225,12 @@ object MainForm: TMainForm
         object lblTranslate: TLabel
           Left = 1
           Top = 1
-          Width = 674
+          Width = 670
           Height = 74
           Align = alTop
           Alignment = taCenter
           AutoSize = False
+          Caption = 'Translate'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -37
@@ -239,8 +243,8 @@ object MainForm: TMainForm
         end
         object lblTranscript: TLabel
           Left = 1
-          Top = 144
-          Width = 674
+          Top = 140
+          Width = 670
           Height = 74
           Align = alBottom
           Alignment = taCenter
@@ -1662,6 +1666,72 @@ object MainForm: TMainForm
       end
     end
   end
+  object pnlSlip: TPanel
+    Left = 0
+    Top = 29
+    Width = 676
+    Height = 219
+    Color = clWindow
+    ParentBackground = False
+    PopupMenu = ppMain
+    TabOrder = 3
+    OnClick = pnlMainClick
+    object lblWordS: TLabel
+      Left = 1
+      Top = 75
+      Width = 674
+      Height = 69
+      Align = alClient
+      Alignment = taCenter
+      AutoSize = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -37
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+      OnClick = pnlMainClick
+      ExplicitLeft = 0
+      ExplicitTop = 69
+    end
+    object lbTranslateS: TLabel
+      Left = 1
+      Top = 1
+      Width = 674
+      Height = 74
+      Align = alTop
+      Alignment = taCenter
+      AutoSize = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -37
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+      OnClick = pnlMainClick
+      ExplicitWidth = 691
+    end
+    object lblTranscriptS: TLabel
+      Left = 1
+      Top = 144
+      Width = 674
+      Height = 74
+      Align = alBottom
+      Alignment = taCenter
+      AutoSize = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -37
+      Font.Name = 'PhoneticTM'
+      Font.Style = []
+      ParentFont = False
+      OnClick = pnlMainClick
+      ExplicitTop = 148
+      ExplicitWidth = 691
+    end
+  end
   object mnuMain: TMainMenu
     Left = 8
     Top = 40
@@ -2093,12 +2163,12 @@ object MainForm: TMainForm
     Enabled = False
     Interval = 100
     OnTimer = tmrEnableActnTimer
-    Left = 256
+    Left = 216
     Top = 189
   end
   object tmrSession: TTimer
     OnTimer = tmrSessionTimer
-    Left = 248
+    Left = 256
     Top = 133
   end
   object VbMouse: TVorbisIn
@@ -2144,5 +2214,13 @@ object MainForm: TMainForm
     OutputChannels = cnMonoOrStereo
     Left = 128
     Top = 29
+  end
+  object tmrSlip: TTimer
+    Tag = 300
+    Enabled = False
+    Interval = 10
+    OnTimer = tmrSlipTimer
+    Left = 256
+    Top = 189
   end
 end

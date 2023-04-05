@@ -34,13 +34,13 @@ type
     DBEdit4: TDBEdit;
     DBEdit1: TDBEdit;
     DBCheckBox1: TDBCheckBox;
-    Panel1: TPanel;
-    btnDel: TButton;
     DBEdit2: TDBEdit;
     Label2: TLabel;
     DBEdit5: TDBEdit;
     Label4: TLabel;
     DBEdit6: TDBEdit;
+    Panel1: TPanel;
+    btnDel: TButton;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
