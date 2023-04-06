@@ -64,7 +64,6 @@ type
     lblWord: TLabel;
     lblTranslate: TLabel;
     lblTranscript: TLabel;
-    pnlSlip: TPanel;
     llStudy: TLinkLabel;
     llRepeat: TLinkLabel;
     llDict: TLinkLabel;
@@ -78,7 +77,6 @@ type
     Spritz1: TMenuItem;
     tmrPass: TTimer;
     llStudyAgain: TLinkLabel;
-    Image1: TImage;
     actLearned: TAction;
     ppMain: TPopupMenu;
     Markwordaslearned1: TMenuItem;
@@ -87,14 +85,18 @@ type
     tmrSession: TTimer;
     btnReset: TButton;
     VbMouse: TVorbisIn;
-    aeMain: TApplicationEvents;
     dxOut: TDXAudioOut;
     dxMouse: TDXAudioOut;
     inMP3: TMP3In;
+    tmrSlip: TTimer;
+    pnlSlip: TPanel;
     lblWordS: TLabel;
     lbTranslateS: TLabel;
     lblTranscriptS: TLabel;
-    tmrSlip: TTimer;
+    tmrFlip: TTimer;
+    pnlImg: TPanel;
+    imgFront: TImage;
+    imgBack: TImage;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -142,13 +144,15 @@ type
     procedure dsOutProgress(Sender: TComponent);
     procedure tmrSessionTimer(Sender: TObject);
     procedure btnResetClick(Sender: TObject);
-    procedure aeMainMessage(var Msg: tagMSG; var Handled: Boolean);
     procedure dxOutDone(Sender: TComponent);
     procedure tmrSlipTimer(Sender: TObject);
+    procedure tmrFlipTimer(Sender: TObject);
+    procedure apeMainMessage(var Msg: tagMSG; var Handled: Boolean);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
-    isTimeout, isPause, isFrontShown, isPassed, isStudied:boolean;
+    isTimeout, isPause, isFrontShown, isPassed,
+    isStudied, isGrip:boolean;
 
     IDList: TList<Integer>;
     WordList:TStringList;
@@ -195,7 +199,9 @@ type
     procedure ShowTranscriptS(Query: TFDQuery);
     procedure ShowWordS(Query: TFDQuery);
     procedure SlipCard;
+    procedure FlipCard;
     procedure ShowFullCardS(Query: TFDQuery);
+    procedure PanelToImage(Panel: TPanel; Image: TImage);
 
   public
     property Dictionary:string write SetDictionary;
@@ -450,6 +456,46 @@ begin
   isStudied:=false;
 end;
 
+procedure TMainForm.tmrFlipTimer(Sender: TObject);
+var
+  deltaX:integer;
+
+begin
+  deltaX:=Round(pnlImg.Width / (tmrFlip.Tag / tmrFlip.Interval));
+
+  if isGrip then
+  begin
+    imgFront.Width:=imgFront.Width-deltaX;
+
+    imgFront.Left:= (pnlImg.Width-imgFront.Width) div 2;
+
+    if imgFront.Width<=0 then
+      begin
+        isGrip:=false;
+        imgBack.Left:=pnlImg.Width div 2;
+        imgBack.BringToFront;
+        imgFront.Width:=0;
+
+        tmrFlip.Enabled:=false;
+        tmrFlip.Enabled:=true;
+      end
+  end
+  else
+    begin
+      imgBack.Width:=imgBack.Width+deltaX;
+      imgBack.Left:= (pnlImg.Width-imgBack.Width) div 2;
+
+      if imgBack.Width>=pnlImg.Width then
+      begin
+        tmrFlip.Enabled:=false;
+        imgBack.Width:=0;
+        pnlMain.BringToFront;
+      end;
+
+    end;
+
+end;
+
 procedure TMainForm.tmrMainTimer(Sender: TObject);
 begin
   if isCountdown then
@@ -498,9 +544,12 @@ begin
   deltaX:=Round(pnlSlip.Width / (tmrSlip.Tag / tmrSlip.Interval));
   pnlSlip.Left := pnlSlip.Left + deltaX;
 
+  if pnlSlip.Left=-pnlMain.Width+deltaX then
+    pnlSlip.BringToFront;
+
   if (pnlSlip.Left) >= 0 then
   begin
-    // At the end of the timer, set the position of Panel2 to fully cover Panel1
+    // At the end of the timer, set the position of Panel2 to fully cover pnlMain
     pnlSlip.Left := 0;
     tmrSlip.Enabled := False;
     pnlslip.Width:=0;
@@ -815,6 +864,8 @@ begin
   timest:=Query['REPEATTRANS'];
   timesw:=Query['REPEATWORD'];
 
+  pnlSlip.BringToFront;
+
   ClearCardS;
 
   if (timest>=timesw) then
@@ -847,6 +898,8 @@ begin
     end
     else
       ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+
+//  plMain.BringToFront;
 
   tmrTimeout.Enabled:=true;
   tmrPause.Enabled:=true;
@@ -928,6 +981,23 @@ begin
 
     timest:=Query['REPEATTRANS'];
     timesw:=Query['REPEATWORD'];
+
+    if (timest>=timesw) then
+    begin
+      ClearCardS;
+      ShowTranscriptS(Query);
+      ShowWordS(Query);
+    end
+    else
+    begin
+      if timesw>0 then
+      begin
+        ClearCardS;
+        ShowTranslateS(Query)
+      end;
+    end;
+
+    FlipCard;
 
     if (timest>=timesw) then
     begin
@@ -1157,6 +1227,41 @@ begin
 
 end;
 
+procedure TMainForm.FlipCard;
+begin
+  isGrip:=true;
+
+  imgBack.Width:=pnlImg.Width;
+  imgBack.Top:=0;
+  imgBack.Left:=0;
+  imgBack.Height:=pnlImg.Height;
+
+
+  pnlSlip.Left:=0;
+  pnlSlip.Width:=pnlMain.Width;
+
+  pnlMain.Color:=clWindow;
+  pnlSlip.Color:=clInfoBk;
+
+  PanelToImage(pnlMain, imgFront);
+  PanelToImage(pnlSlip, imgBack);
+
+  pnlMain.Color:=clInfoBk;
+
+  pnlSlip.Left:=-pnlMain.Width;
+
+  imgFront.Width:=pnlImg.Width;
+  imgFront.Left:=0;
+  imgFront.Width:=pnlImg.Width;
+
+  imgBack.Width:=0;
+
+  pnlImg.BringToFront;
+  pnlSlip.Left := -pnlMain.Width;
+
+  tmrFlip.Enabled:=true;
+end;
+
 procedure TMainForm.FormActivate(Sender: TObject);
 begin
   Stop;
@@ -1170,7 +1275,19 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
 
-  pnlSlip.Top:=tbMain.Height;
+  // Set initial position of pnlBack to be off-screen to the right of pnlFront
+
+  imgFront.Left:=0;
+  imgFront.Width:=pnlImg.Width;
+  imgFront.Height:=pnlImg.Height;
+  imgFront.Top:=0;
+
+  imgBack.Top:=0;
+  imgBack.Height:=pnlImg.Height;
+  imgBack.Width:=0;
+
+
+  pnlSlip.Top:=0;
   pnlSlip.Width := pnlMain.Width;
   pnlSlip.Height := pnlMain.Height;
   pnlSlip.BorderStyle:=bsSingle;
@@ -1189,6 +1306,10 @@ begin
 
   SetMainPanel;
   plMain.ActivePageIndex:=0;
+
+  imgFront.BringToFront;
+  pnlMain.BringToFront;
+
 end;
 
 procedure TMainForm.SetMainPanel;
@@ -1288,6 +1409,12 @@ end;
 procedure TMainForm.apeMainDeactivate(Sender: TObject);
 begin
   isPause:=true;
+end;
+
+procedure TMainForm.apeMainMessage(var Msg: tagMSG; var Handled: Boolean);
+begin
+  if Msg.Message=WM_LBUTTONDOWN then
+    SoundMouseClick;
 end;
 
 procedure TMainForm.apeMainShowHint(var HintStr: string; var CanShow: Boolean;
@@ -1475,12 +1602,6 @@ begin
   end;
 
   actLearn.Execute;
-end;
-
-procedure TMainForm.aeMainMessage(var Msg: tagMSG; var Handled: Boolean);
-begin
-  if Msg.Message=WM_LBUTTONDOWN then
-    SoundMouseClick;
 end;
 
 procedure TMainForm.actRepetitionExecute(Sender: TObject);
@@ -2019,6 +2140,24 @@ begin
     qrMisc.Close
   end;
 end;
+
+procedure TMainForm.PanelToImage(Panel: TPanel; Image: TImage);
+var
+  Bitmap: TBitmap;
+begin
+  Bitmap := TBitmap.Create;
+  try
+    Bitmap.Width := Panel.Width;
+    Bitmap.Height := Panel.Height;
+    Bitmap.Canvas.Brush.Color := Panel.Color;
+    Bitmap.Canvas.FillRect(Rect(0, 0, Panel.Width, Panel.Height));
+    Panel.PaintTo(Bitmap.Canvas.Handle, 0, 0);
+    Image.Picture.Bitmap.Assign(Bitmap);
+  finally
+    Bitmap.Free;
+  end;
+end;
+
 
 end.
 

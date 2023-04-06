@@ -28,7 +28,7 @@ object dlgStopStudy: TdlgStopStudy
       412
       51)
     object btnCancel: TButton
-      Left = 263
+      Left = 259
       Top = 14
       Width = 75
       Height = 25
@@ -37,10 +37,10 @@ object dlgStopStudy: TdlgStopStudy
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 259
+      ExplicitLeft = 255
     end
     object btnRepeat: TButton
-      Left = 23
+      Left = 19
       Top = 14
       Width = 75
       Height = 24
@@ -50,10 +50,10 @@ object dlgStopStudy: TdlgStopStudy
       ModalResult = 1
       TabOrder = 0
       OnClick = btnRepeatClick
-      ExplicitLeft = 19
+      ExplicitLeft = 15
     end
     object btnStudy: TButton
-      Left = 120
+      Left = 116
       Top = 14
       Width = 75
       Height = 25
@@ -63,7 +63,7 @@ object dlgStopStudy: TdlgStopStudy
       ModalResult = 1
       TabOrder = 2
       OnClick = btnStudyClick
-      ExplicitLeft = 116
+      ExplicitLeft = 112
     end
   end
   object Panel2: TPanel

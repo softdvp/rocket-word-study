@@ -25,8 +25,8 @@ type
     Panel2: TPanel;
     Label1: TLabel;
     btnStudy: TButton;
-    tmrRun: TTimer;
     lbNote: TLabel;
+    tmrRun: TTimer;
     procedure btnRepeatClick(Sender: TObject);
     procedure btnStudyClick(Sender: TObject);
     procedure tmrRunTimer(Sender: TObject);
