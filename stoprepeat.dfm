@@ -3,8 +3,8 @@ object dlgStopRepeat: TdlgStopRepeat
   Top = 0
   BorderStyle = bsDialog
   Caption = 'All words have been repeated!'
-  ClientHeight = 130
-  ClientWidth = 429
+  ClientHeight = 129
+  ClientWidth = 425
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,19 +16,17 @@ object dlgStopRepeat: TdlgStopRepeat
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 79
-    Width = 429
+    Top = 78
+    Width = 425
     Height = 51
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 78
-    ExplicitWidth = 425
     DesignSize = (
-      429
+      425
       51)
     object btnStudy: TButton
-      Left = 104
+      Left = 100
       Top = 13
       Width = 75
       Height = 25
@@ -38,10 +36,9 @@ object dlgStopRepeat: TdlgStopRepeat
       ModalResult = 1
       TabOrder = 1
       OnClick = btnStudyClick
-      ExplicitLeft = 100
     end
     object btnCancel: TButton
-      Left = 249
+      Left = 245
       Top = 13
       Width = 75
       Height = 25
@@ -50,10 +47,9 @@ object dlgStopRepeat: TdlgStopRepeat
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 2
-      ExplicitLeft = 245
     end
     object btnRepeat: TButton
-      Left = 14
+      Left = 10
       Top = 13
       Width = 75
       Height = 25
@@ -63,18 +59,15 @@ object dlgStopRepeat: TdlgStopRepeat
       ModalResult = 1
       TabOrder = 0
       OnClick = btnRepeatClick
-      ExplicitLeft = 10
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 429
-    Height = 79
+    Width = 425
+    Height = 78
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 425
-    ExplicitHeight = 78
     object Label1: TLabel
       Left = 26
       Top = 16

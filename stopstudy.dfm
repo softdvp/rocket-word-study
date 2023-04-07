@@ -3,8 +3,8 @@ object dlgStopStudy: TdlgStopStudy
   Top = 0
   BorderStyle = bsDialog
   Caption = 'All current words are studied!'
-  ClientHeight = 138
-  ClientWidth = 412
+  ClientHeight = 137
+  ClientWidth = 408
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,20 +16,20 @@ object dlgStopStudy: TdlgStopStudy
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 87
-    Width = 412
+    Top = 86
+    Width = 408
     Height = 51
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 86
-    ExplicitWidth = 408
+    ExplicitTop = 85
+    ExplicitWidth = 404
     DesignSize = (
-      412
+      408
       51)
     object btnCancel: TButton
-      Left = 259
-      Top = 14
+      Left = 255
+      Top = 13
       Width = 75
       Height = 25
       Anchors = [akTop, akRight]
@@ -37,10 +37,9 @@ object dlgStopStudy: TdlgStopStudy
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 255
     end
     object btnRepeat: TButton
-      Left = 19
+      Left = 15
       Top = 14
       Width = 75
       Height = 24
@@ -50,11 +49,11 @@ object dlgStopStudy: TdlgStopStudy
       ModalResult = 1
       TabOrder = 0
       OnClick = btnRepeatClick
-      ExplicitLeft = 15
+      ExplicitLeft = 11
     end
     object btnStudy: TButton
-      Left = 116
-      Top = 14
+      Left = 112
+      Top = 13
       Width = 75
       Height = 25
       Anchors = [akTop, akRight]
@@ -63,18 +62,17 @@ object dlgStopStudy: TdlgStopStudy
       ModalResult = 1
       TabOrder = 2
       OnClick = btnStudyClick
-      ExplicitLeft = 112
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 412
-    Height = 87
+    Width = 408
+    Height = 86
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 408
-    ExplicitHeight = 86
+    ExplicitWidth = 404
+    ExplicitHeight = 85
     object Label1: TLabel
       Left = 35
       Top = 18

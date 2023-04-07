@@ -19,7 +19,7 @@ uses
   Vcl.ToolWin, JclFileUtils, JvTimer, ACS_Classes, NewACDSAudio, ACS_Vorbis, ShellFileSupport,
   Vcl.AppEvnts, JvExComCtrls, JvComCtrls, JvTabBar, JvPageList, JvExControls, UITypes,
   Vcl.Imaging.pngimage, ACS_DXAudio, JvComponentBase, JvAppEvent, ACS_WinMedia,
-  ACS_smpeg;
+  ACS_smpeg, JvgProgress;
 
 type
 
@@ -97,6 +97,11 @@ type
     pnlImg: TPanel;
     imgFront: TImage;
     imgBack: TImage;
+    tmrCountdown: TTimer;
+    pge3: TJvStandardPage;
+    pnlCountdown: TPanel;
+    imgCountdown: TImage;
+    lbCoundown: TLabel;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -148,6 +153,7 @@ type
     procedure tmrSlipTimer(Sender: TObject);
     procedure tmrFlipTimer(Sender: TObject);
     procedure apeMainMessage(var Msg: tagMSG; var Handled: Boolean);
+    procedure tmrCountdownTimer(Sender: TObject);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
@@ -158,17 +164,22 @@ type
     WordList:TStringList;
 
     StudyState, fStudiedAll,
-    fChecked, fTotal, fStudied,
+    fChecked, fTotal, fStudied, fRepeated,
     fStudying, fErrors, PronounceWord,
     SessionTime:integer;
 
     LastTranslation:string;
+
+    Angle: real;
+    TimerCount, LastCount:integer;
 
     procedure SetDictionary(s:string);
     procedure SetStudiedAll(v:integer);
     procedure SetChecked(v:integer);
     procedure SetTotal(v:integer);
     procedure SetStudied(v:integer);
+    procedure SetRepeated(v:integer);
+
     procedure SetStudying(v:integer);
     procedure SetErrors(v:integer);
 
@@ -202,6 +213,8 @@ type
     procedure FlipCard;
     procedure ShowFullCardS(Query: TFDQuery);
     procedure PanelToImage(Panel: TPanel; Image: TImage);
+    procedure ProgressBar(Width, Height: integer; Ang: real);
+    procedure InitCountdown;
 
   public
     property Dictionary:string write SetDictionary;
@@ -209,6 +222,7 @@ type
     property Checked:integer write SetChecked;
     property StudiedAll:integer read fStudiedAll write SetStudiedAll;
     property Studied:integer read fStudied write SetStudied;
+    property Repeated:integer read fRepeated write SetRepeated;
     property Studying:integer read fStudying write SetStudying;
     property Errors:integer read fErrors write SetErrors;
     procedure Pronounce(word:string);
@@ -420,9 +434,54 @@ begin
   actRepeat.Enabled:=false;
   actStop.Enabled:=true;
 
-  ShowCountdown(Countdown);
-  tmrMain.Interval:=1000;
-  tmrMain.Enabled:=true;
+//  ShowCountdown(Countdown);
+//  tmrMain.Interval:=1000;
+//  tmrMain.Enabled:=true;
+
+  tmrCountdown.Tag:=Countdown*1000;
+  InitCountdown;
+end;
+
+procedure TMainForm.tmrCountdownTimer(Sender: TObject);
+const
+  CorrTime=100;
+var
+  DifAngle:real;
+  Count, TickPerSec :integer;
+  Tag, d: integer;
+begin
+  Tag:=tmrCountdown.Tag * 100 div CorrTime;
+  DifAngle:=360*tmrCountdown.Interval/Tag;
+  Angle:=Angle+DifAngle;
+  imgCountdown.Canvas.Pen.Color:=clLime;
+
+  ProgressBar(imgCountdown.Width, imgCountdown.Height, Angle);
+
+  Inc(TimerCount);
+  TickPerSec:=(100000 div CorrTime) div tmrCountdown.Interval;
+
+  Count:=TimerCount div TickPerSec;
+
+  if Count<>LastCount then
+  begin
+    LastCount:=Count;
+    d:=Tag div 1000 - Count;
+    lbCoundown.Caption:=IntToStr(d);
+  end;
+
+  if Count>=Tag div (100000 div CorrTime)  then
+//  if TimerCount=tmrCountdown.Tag div tmrCountdown.Interval then
+  begin
+    Application.ProcessMessages;
+    Sleep(300);
+    lbCoundown.Caption:='';
+    tmrCountdown.Enabled:=false;
+    plMain.ActivePageIndex:=0;
+    pnlMain.PopupMenu:=ppMain;
+
+    if not isAbort then
+      RepeatOneSide;
+  end
 end;
 
 procedure TMainForm.tmrEnableActnTimer(Sender: TObject);
@@ -564,16 +623,21 @@ end;
 
 procedure TMainForm.tmrTimeoutTimer(Sender: TObject);
 begin
-  isTimeout:=true;
-  tmrTimeout.Enabled:=false;
+  try
+    actRepetition.Enabled:=false;
+    isTimeout:=true;
+    tmrTimeout.Enabled:=false;
 
-  ClearCardS;
-  ShowFullCardS(dm.qrRepeat);
-  pnlSlip.Color:=pnlMain.Color;
-  SlipCard;
+    ClearCardS;
+    ShowFullCardS(dm.qrRepeat);
+    pnlSlip.Color:=pnlMain.Color;
+    SlipCard;
 
-  ClearCard;
-  ShowFullCard(dm.qrRepeat);
+    ClearCard;
+    ShowFullCard(dm.qrRepeat);
+  finally
+    actRepetition.Enabled:=true;
+  end;
 end;
 
 procedure TMainForm.ToolButton6Click(Sender: TObject);
@@ -673,47 +737,53 @@ end;
 
 procedure TMainForm.StudyFullCard;
 begin
-  with dm do
-  begin
-    if qrOptions.FieldByName('DICTIONARY').AsInteger=0 then
+  try
+    actStudy.Enabled:=false;
+
+    with dm do
     begin
-      ShowMessage('Please click menu item Dictionary and select a dictionary');
-      exit
-    end;
+      if qrOptions.FieldByName('DICTIONARY').AsInteger=0 then
+      begin
+        ShowMessage('Please click menu item Dictionary and select a dictionary');
+        exit
+      end;
 
-    qrStudy.ParamByName('DICTID').AsInteger:=qrOptions['DICTIONARY'];
-    qrStudy.ParamByName('STATE').AsInteger:=0;
-    qrStudy.ParamByName('LIMIT').AsInteger:=qrOptions.FieldByName('WORDS').AsInteger;
+      qrStudy.ParamByName('DICTID').AsInteger:=qrOptions['DICTIONARY'];
+      qrStudy.ParamByName('STATE').AsInteger:=0;
+      qrStudy.ParamByName('LIMIT').AsInteger:=qrOptions.FieldByName('WORDS').AsInteger;
 
-    Studying:=qrOptions.FieldByName('WORDS').AsInteger;
-    Studied:=0;
-    Errors:=0;
+      Studying:=qrOptions.FieldByName('WORDS').AsInteger;
+//      Studied:=0;
+//      Errors:=0;
 
-    qrStudy.Open;
+      qrStudy.Open;
 
-    if not qrStudy.Eof then
-    begin
-      FullStudyMode:=true;
-      btnOk.Action:=actStudy;
-      Run;
-      tmrPass.Enabled:=false;
-      tmrPass.Enabled:=true;
+      if not qrStudy.Eof then
+      begin
+        FullStudyMode:=true;
+        btnOk.Action:=actStudy;
+        Run;
+        tmrPass.Enabled:=false;
+        tmrPass.Enabled:=true;
 
-      ClearCardS;
-      ShowFullCardS(qrStudy);
-      pnlSlip.Color:=pnlMain.Color;
-      SlipCard;
+        ClearCardS;
+        ShowFullCardS(qrStudy);
+        pnlSlip.Color:=pnlMain.Color;
+        SlipCard;
 
-      ClearCard;
-      ShowFullCard(qrStudy)
+        ClearCard;
+        ShowFullCard(qrStudy)
+      end
+      else
+      begin
+        Stop;
+        Inc(StudyState);
+        StartStudy;
+      end;
     end
-    else
-    begin
-      Stop;
-      Inc(StudyState);
-      StartStudy;
-    end;
-  end
+  finally
+    actStudy.Enabled:=true
+  end;
 end;
 
 procedure TMainForm.SetStudying(v: integer);
@@ -735,8 +805,8 @@ begin
     IdList.Clear;
 
     Studying:=0;
-    Studied:=0;
-    Errors:=0;
+//    Studied:=0;
+//    Errors:=0;
 
     tmrPause.Interval:=qrOptions['INACTIVETIME']*1000;
     tmrTimeout.Interval:=qrOptions['TIMEANSWER']*1000;
@@ -763,8 +833,8 @@ begin
 
       IdList.Sort;
       Studying:=IdList.Count;
-      Studied:=0;
-      Errors:=0;
+//      Studied:=0;
+//      Errors:=0;
 
       Id:=RandomId;
 
@@ -834,7 +904,7 @@ begin
       IdList.Sort;
 
       Studying:=IdList.Count;
-      Studied:=0;
+//      Studied:=0;
       Errors:=0;
 
       Id:=RandomId;
@@ -861,48 +931,51 @@ procedure TMainForm.RepeatFrontBack;
 var
   timest, timesw: integer;
 begin
-  timest:=Query['REPEATTRANS'];
-  timesw:=Query['REPEATWORD'];
+  try
+    actRepetition.Enabled:=false;
+    timest:=Query['REPEATTRANS'];
+    timesw:=Query['REPEATWORD'];
+    pnlSlip.BringToFront;
 
-  pnlSlip.BringToFront;
-
-  ClearCardS;
-
-  if (timest>=timesw) then
-  begin
     ClearCardS;
-    ShowTranslateS(Query)
-  end
-  else
-    if timesw>0 then
+
+    if (timest>=timesw) then
     begin
       ClearCardS;
-      ShowTranscriptS(Query);
-      ShowWordS(Query);
-    end;
-
-  pnlSlip.Color:=pnlMain.Color;
-  SlipCard;
-
-  if (timest>=timesw) then
-  begin
-    ClearCard;
-    ShowTranslate(Query)
-  end
-  else
-    if timesw>0 then
-    begin
-      ClearCard;
-      ShowTranscript(Query);
-      ShowWord(Query);
+      ShowTranslateS(Query)
     end
     else
-      ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+      if timesw>0 then
+      begin
+        ClearCardS;
+        ShowTranscriptS(Query);
+        ShowWordS(Query);
+      end;
 
-//  plMain.BringToFront;
+    pnlSlip.Color:=pnlMain.Color;
+    SlipCard;
 
-  tmrTimeout.Enabled:=true;
-  tmrPause.Enabled:=true;
+    if (timest>=timesw) then
+    begin
+      ClearCard;
+      ShowTranslate(Query)
+    end
+    else
+      if timesw>0 then
+      begin
+        ClearCard;
+        ShowTranscript(Query);
+        ShowWord(Query);
+      end
+      else
+        ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+
+    tmrTimeout.Enabled:=true;
+    tmrPause.Enabled:=true;
+  finally
+    actRepetition.Enabled:=true;
+  end;
+
 end;
 
 procedure TMainForm.SlipCard;
@@ -920,52 +993,57 @@ var
   timest, timesw: integer;
 begin
   try
-    if isAbort then exit;
-    if not Query.Active then exit;
+    actStudy.Enabled:=false;
+    try
+      if isAbort then exit;
+      if not Query.Active then exit;
 
-    timest:=Query['REPEATTRANS'];
-    timesw:=Query['REPEATWORD'];
+      timest:=Query['REPEATTRANS'];
+      timesw:=Query['REPEATWORD'];
 
-    ClearCardS;
-
-    if (timest>=timesw) then
-    begin
       ClearCardS;
-      ShowTranslateS(Query)
-    end
-    else
-    begin
-      if timesw>0 then
+
+      if (timest>=timesw) then
       begin
         ClearCardS;
-        ShowTranscriptS(Query);
-        ShowWordS(Query);
-      end
-    end;
-
-    pnlSlip.Color:=clWindow;
-    SlipCard;
-    pnlMain.Color:=clWindow;
-
-    if (timest>=timesw) then
-    begin
-      ClearCard;
-      ShowTranslate(Query)
-    end
-    else
-    begin
-      if timesw>0 then
-      begin
-        ClearCard;
-        ShowTranscript(Query);
-        ShowWord(Query);
+        ShowTranslateS(Query)
       end
       else
-        ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+      begin
+        if timesw>0 then
+        begin
+          ClearCardS;
+          ShowTranscriptS(Query);
+          ShowWordS(Query);
+        end
+      end;
+
+      pnlSlip.Color:=clWindow;
+      SlipCard;
+      pnlMain.Color:=clWindow;
+
+      if (timest>=timesw) then
+      begin
+        ClearCard;
+        ShowTranslate(Query)
+      end
+      else
+      begin
+        if timesw>0 then
+        begin
+          ClearCard;
+          ShowTranscript(Query);
+          ShowWord(Query);
+        end
+        else
+          ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+      end;
+    except
+    on E: Exception do
+      ShowMessage('StudyFrontCard: '+E.Message);
     end;
-  except
-  on E: Exception do
-    ShowMessage('StudyFrontCard: '+E.Message);
+  finally
+    actStudy.Enabled:=true;
   end;
 end;
 
@@ -974,50 +1052,62 @@ var
   timest, timesw: integer;
 begin
   try
-    if isAbort then exit;
-    if not Query.Active then exit;
+    actStudy.Enabled:=false;
+    try
+      if isAbort then exit;
+      if not Query.Active then exit;
 
-    pnlMain.Color:=clInfoBk;
+      pnlMain.Color:=clInfoBk;
 
-    timest:=Query['REPEATTRANS'];
-    timesw:=Query['REPEATWORD'];
+      timest:=Query['REPEATTRANS'];
+      timesw:=Query['REPEATWORD'];
 
-    if (timest>=timesw) then
-    begin
-      ClearCardS;
-      ShowTranscriptS(Query);
-      ShowWordS(Query);
-    end
-    else
-    begin
-      if timesw>0 then
+      if (timest>=timesw) then
       begin
         ClearCardS;
-        ShowTranslateS(Query)
-      end;
-    end;
-
-    FlipCard;
-
-    if (timest>=timesw) then
-    begin
-      ClearCard;
-      ShowTranscript(Query);
-      ShowWord(Query);
-    end
-    else
-    begin
-      if timesw>0 then
-      begin
-        ClearCard;
-        ShowTranslate(Query)
+        ShowTranscriptS(Query);
+        ShowWordS(Query);
       end
       else
-        ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+      begin
+        if timesw>0 then
+        begin
+          ClearCardS;
+          ShowTranslateS(Query)
+        end;
+      end;
+
+      FlipCard;
+
+      if (timest>=timesw) then
+      begin
+        ClearCard;
+        ShowTranscript(Query);
+        ShowWord(Query);
+      end
+      else
+      begin
+        if timesw>0 then
+        begin
+          ClearCard;
+          ShowTranslate(Query)
+        end
+        else
+          ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
+      end;
+    except on E: Exception do
+      ShowMessage('StudyBackCard: '+E.Message);
     end;
-  except on E: Exception do
-    ShowMessage('StudyBackCard: '+E.Message);
+  finally
+    actStudy.Enabled:=true;
   end;
+end;
+
+
+procedure TMainForm.SetRepeated(v: integer);
+begin
+  fRepeated:=v;
+  sbMain.Panels[6].Text:=IntToStr(v);
 end;
 
 procedure TMainForm.SetRepeatNextLevel;
@@ -1046,7 +1136,7 @@ begin
 
   if (timesw=0) and (timest=0) then
   begin
-    Studied:=Studied+1;
+    Repeated:=Repeated+1;
 
     if NextLevel=g_Studied then
     begin
@@ -1169,7 +1259,7 @@ end;
 procedure TMainForm.SetErrors(v: integer);
 begin
   fErrors:=v;
-  sbMain.Panels[6].Text:=IntToStr(v);
+  sbMain.Panels[7].Text:=IntToStr(v);
 end;
 
 procedure TMainForm.ClearCardS;
@@ -1338,6 +1428,7 @@ begin
     end;
 
     Studied:=0;
+    Repeated:=0;
     Studying:=0;
     Errors:=0;
 
@@ -1421,9 +1512,9 @@ procedure TMainForm.apeMainShowHint(var HintStr: string; var CanShow: Boolean;
   var HintInfo: Vcl.Controls.THintInfo);
 
 const
-    Hints : array[0..6] of string =
+    Hints : array[0..7] of string =
     ('Selected dictionary', 'Words studied total', 'Words selected to study',
-      'Total words in the dictionary','Studied/repeated now', 'Studying/repeating now',
+      'Total words in the dictionary','Studied now', 'Studying/repeating now', 'Repeated now',
        'Errors');
 var
   r: TRect;
@@ -1478,118 +1569,124 @@ procedure TMainForm.actStudyExecute(Sender: TObject);
 var
   Id, Idx: integer;
 begin
-  LastTranslation:='';
-  tmrPass.Enabled:=false;
+  try
+    actStudy.Enabled:=false;
 
-  with dm do
-  begin
-    if FullStudyMode then
+    LastTranslation:='';
+    tmrPass.Enabled:=false;
+
+    with dm do
     begin
-      qrStudy.Edit;
-
-      if isStudied then
+      if FullStudyMode then
       begin
-        qrStudy['STATE']:=g_Studied;
-        qrStudy['REPEATWORD']:=1;
-        qrStudy['REPEATTRANS']:=1;
-      end;
+        qrStudy.Edit;
 
-      if not isPassed then
-      begin
-        if not IsStudied then
-          qrStudy['STATE']:=g_Learning
-      end
-      else
-      begin
-        isPassed:=false;
-        if not IsStudied then
-          qrStudy['STATE']:=g_Passed;
-      end;
-
-      if not isStudied then
-      begin
-        qrStudy['REPEATWORD']:=qrOptions['SHOWTIMES'];
-        qrStudy['REPEATTRANS']:=qrOptions['SHOWTIMES'];
-      end
-      else
-      begin
-        qrStudy['REPEATWORD']:=0;
-        qrStudy['REPEATTRANS']:=0;
-      end;
-
-      qrStudy.Post;
-      fdcRws.Commit;
-      fdcRws.StartTransaction;
-
-      qrStudy.Next;
-
-      if qrStudy.Eof then
-      begin
-        Stop;
-        Inc(StudyState);
-        StartStudy;
-      end
-      else
-      begin
-        tmrPass.Enabled:=false;
-        tmrPass.Enabled:=true;
-
-        ClearCardS;
-        ShowFullCardS(qrStudy);
-        pnlSlip.Color:=pnlMain.Color;
-        SlipCard;
-
-        ClearCard;
-        ShowFullCard(qrStudy);
-      end;
-    end //if FullStudyMode
-    else
-    begin
-      tmrPause.Enabled:=false;
-      isPause:=false;
-
-      if isFrontShown and not isStudied then
-      begin
-        StudyBackCard(qrStudy);
-        isFrontShown:=false;
-        exit;
-      end;
-
-      isFrontShown:=true;
-      NextLevel:=1;
-      SetStudyNextLevel(qrStudy);
-
-      fdcRWS.Commit;
-      fdcRWS.StartTransaction;
-
-      if qrStudy['STATE']<>g_learning then
-      begin  //Remove from Random List
-
-        if IDList.Count>0 then
+        if isStudied then
         begin
-          Id:=qrStudy['ID'];
-          Idx:=IDList.IndexOf(ID);
-          if(Idx>=0) then
-            IDList.Delete(Idx);
+          qrStudy['STATE']:=g_Studied;
+          qrStudy['REPEATWORD']:=1;
+          qrStudy['REPEATTRANS']:=1;
         end;
-      end;
 
-      Id:=RandomId;
+        if not isPassed then
+        begin
+          if not IsStudied then
+            qrStudy['STATE']:=g_Learning
+        end
+        else
+        begin
+          isPassed:=false;
+          if not IsStudied then
+            qrStudy['STATE']:=g_Passed;
+        end;
 
-      if Id<0 then
-      begin
-        Stop;
-        Inc(StudyState);
+        if not isStudied then
+        begin
+          qrStudy['REPEATWORD']:=qrOptions['SHOWTIMES'];
+          qrStudy['REPEATTRANS']:=qrOptions['SHOWTIMES'];
+        end
+        else
+        begin
+          qrStudy['REPEATWORD']:=0;
+          qrStudy['REPEATTRANS']:=0;
+        end;
 
-        StartStudy
+        qrStudy.Post;
+        fdcRws.Commit;
+        fdcRws.StartTransaction;
+
+        qrStudy.Next;
+
+        if qrStudy.Eof then
+        begin
+          Stop;
+          Inc(StudyState);
+          StartStudy;
+        end
+        else
+        begin
+          tmrPass.Enabled:=false;
+          tmrPass.Enabled:=true;
+
+          ClearCardS;
+          ShowFullCardS(qrStudy);
+          pnlSlip.Color:=pnlMain.Color;
+          SlipCard;
+
+          ClearCard;
+          ShowFullCard(qrStudy);
+        end;
       end
       else
       begin
-        qrStudy.Locate('ID', Id);
+        tmrPause.Enabled:=false;
+        isPause:=false;
 
-        StudyFrontCard(qrStudy)
-      end
+        if isFrontShown and not isStudied then
+        begin
+          StudyBackCard(qrStudy);
+          isFrontShown:=false;
+          exit;
+        end;
+
+        isFrontShown:=true;
+        NextLevel:=1;
+        SetStudyNextLevel(qrStudy);
+
+        fdcRWS.Commit;
+        fdcRWS.StartTransaction;
+
+        if qrStudy['STATE']<>g_learning then
+        begin  //Remove from Random List
+
+          if IDList.Count>0 then
+          begin
+            Id:=qrStudy['ID'];
+            Idx:=IDList.IndexOf(ID);
+            if(Idx>=0) then
+              IDList.Delete(Idx);
+          end;
+        end;
+
+        Id:=RandomId;
+
+        if Id<0 then
+        begin
+          Stop;
+          Inc(StudyState);
+
+          StartStudy
+        end
+        else
+        begin
+          qrStudy.Locate('ID', Id);
+
+          StudyFrontCard(qrStudy)
+        end
+      end;
     end;
+  finally
+    actStudy.Enabled:=true
   end;
 end;
 
@@ -2158,6 +2255,40 @@ begin
   end;
 end;
 
+procedure TMainForm.ProgressBar(Width, Height:integer; Ang:real);
+var Rad:integer;
+begin
+//calculated rate level to increase progress bar.
+  with imgCountdown do
+  begin
+    Canvas.Pen.Width := 12;
+    Canvas.MoveTo(Width div 2,15);
+    Rad:=Min(Width, Height) div 2;
+
+    Canvas.AngleArc(Width div 2, Height div 2, Rad-10, 90, -Ang);
+  end;
+end;
+
+procedure TMainForm.InitCountdown;
+var Rad:integer;
+begin
+  ProgressBar(imgCountdown.Width, imgCountdown.Height, Angle);
+  lbCoundown.Caption:=IntToStr(tmrCountdown.Tag div 1000);
+  Angle:=0;
+  TimerCount:=0;
+
+//  pnlCountdown.Visible:=true;
+  plMain.ActivePageIndex:=2;
+
+  with imgCountdown do
+  begin
+    Canvas.Pen.Color:=clGray;
+    Rad:=Min(Width, Height) div 2;
+    Canvas.AngleArc(Width div 2, Height div 2, Rad-10, 90, 360);
+  end;
+  LastCount:=0;
+  tmrCountdown.Enabled:=true;
+end;
 
 end.
 

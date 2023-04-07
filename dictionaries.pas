@@ -92,14 +92,15 @@ type
     procedure dbgWordsDblClick(Sender: TObject);
   private
     LastWord : string;
-    function GetFilterStr: string;
-    function GetSelectredFilter: string;
+    function GetWordFilterStr: string;
+    function GetSelectedFilter: string;
     procedure SetFilter;
     procedure SelectWords(Sel: boolean);
     procedure ImportRwsFile;
     procedure ImportCvsFile;
     procedure ExportRwsFile(Sl:TStringList; delimiter:char);
     procedure ExportCvsFile(Sl:TStringList; delimiter:char);
+    function GetTranslationFilterStr: string;
     { Private declarations }
   public
     { Public declarations }
@@ -567,7 +568,7 @@ begin
   with dm do
   begin
     CurrDict:=qrDict['ID'];
-    CurrWord:=qrWords['ID'];
+    CurrWord:=qrWords.FieldByName('ID').AsInteger;
   end;
 end;
 
@@ -713,7 +714,7 @@ begin
   SetFilter
 end;
 
-function TfrmDict.GetFilterStr:string;
+function TfrmDict.GetWordFilterStr:string;
 var
   s: string;
   sz: integer;
@@ -729,7 +730,23 @@ begin
     Result:='';
 end;
 
-function TfrmDict.GetSelectredFilter:string;
+function TfrmDict.GetTranslationFilterStr:string;
+var
+  s: string;
+  sz: integer;
+begin
+  s:=edFilter.Text;
+
+  if Trim(s)<>'' then
+  begin
+    sz:=length(s);
+    Result:='SUBSTR(TRANSLATION, 1, '+IntToStr(sz)+')='+Q+s+Q;
+  end
+  else
+    Result:='';
+end;
+
+function TfrmDict.GetSelectedFilter:string;
 begin
   if rbSelected.Checked then
     Result:='SELECTED=TRUE';
@@ -742,29 +759,41 @@ end;
 procedure TfrmDict.SetFilter;
 var
   s, s1 :string;
-begin
-  s:=GetSelectredFilter;
-  s1:=GetFilterStr;
 
-  with dm do
+  procedure SetDictFilter(f:string);
   begin
-    if (s='') and (s1='') then
-      qrWords.Filtered:=false
-    else
+    with dm do
     begin
-      if s1='' then
-      begin
-        qrWords.Filter:=s;
-      end
+      if (s='') and (f='') then
+        qrWords.Filtered:=false
       else
-        if s<>'' then
-          qrWords.Filter:=s+' AND '+ s1
+      begin
+        if f='' then
+        begin
+          qrWords.Filter:=s;
+        end
         else
-          qrWords.Filter:=s1;
+          if s<>'' then
+            qrWords.Filter:=s+' AND '+ f
+          else
+            qrWords.Filter:=f;
 
-      qrWords.Filtered:=true
+        qrWords.Filtered:=true;
+      end;
     end;
   end;
+
+begin
+  s:=GetSelectedFilter;
+  s1:=GetWordFilterStr;
+
+  SetDictFilter(s1);
+
+    if dm.qrWords.Eof then
+    begin
+      s1:=GetTranslationFilterStr;
+      SetDictFilter(s1);
+    end;
 end;
 
 procedure TfrmDict.SpeedButton1Click(Sender: TObject);
