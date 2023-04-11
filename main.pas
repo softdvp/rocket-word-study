@@ -215,7 +215,6 @@ type
     procedure SlipCard;
     procedure FlipCard;
     procedure ShowFullCardS(Query: TFDQuery);
-    procedure PanelToImage(Panel: TPanel; Image: TImage);
     procedure PanelToBitmap(Panel: TPanel; Bitmap: TBitmap);
     procedure ProgressBar(Width, Height: integer; Ang: real);
     procedure InitCountdown;
@@ -225,6 +224,8 @@ protected
       message WM_ERASEBKGND;
 
   public
+        procedure PanelToImage(Panel: TPanel; Image: TImage);
+
     property Dictionary:string write SetDictionary;
     property Total:integer write SetTotal;
     property Checked:integer write SetChecked;
@@ -247,7 +248,7 @@ end;
 
 var
   MainForm: TMainForm;
-    g_AppName:string;
+  g_AppName:string;
 
 implementation
 
@@ -255,6 +256,35 @@ implementation
 
 uses options, dictionaries, dmmain, about, stoprepeat, stopstudy, allstudy,
   passstudy;
+
+var
+  OldWindowProc : Pointer; {Variable for the old windows proc}
+  MyMsg : DWord; {custom systemwide message}
+
+function NewWindowProc(WindowHandle : hWnd;
+                       TheMessage   : Cardinal;
+                       ParamW       : NativeUInt;
+                       ParamL       : NativeInt) : NativeInt stdcall;
+begin
+  if DWord(TheMessage) = MyMsg  then
+  begin
+   {Tell the application to restore, let it restore the form}
+
+    SendMessage(Application.handle, WM_SYSCOMMAND, SC_RESTORE, 0);
+    SendMessage(Application.handle, WM_SYSCOMMAND, SC_RESTORE, 0);
+    SetForegroundWindow(Application.Handle);
+
+   {We handled the message - we are done}
+    Result := 0;
+    exit;
+  end;
+ {Call the original winproc}
+  Result := CallWindowProc(OldWindowProc,
+                           WindowHandle,
+                           TheMessage,
+                           ParamW,
+                           ParamL);
+end;
 
 procedure TMainForm.actDictExecute(Sender: TObject);
 begin
@@ -527,7 +557,7 @@ end;
 procedure TMainForm.tmrFlipTimer(Sender: TObject);
 var
   deltaX:integer;
-  imgRect:TRect;
+
   i:integer;
 
 begin
@@ -1478,11 +1508,18 @@ begin
   IDList:=TList<integer>.Create;
   WordList := TStringList.Create;
 
-  Caption := g_AppName;
+  Caption := g_AppName + ' - ver.' + GetBuildInfoAsString;
   SetMainPanel;
   plMain.ActivePageIndex:=0;
 
   pnlMain.BringToFront;
+
+{Register a custom windows message}
+  MyMsg := RegisterWindowMessage(PChar(g_AppName));
+ {Set form1's windows proc to ours and remember the old window proc}
+  OldWindowProc := Pointer(SetWindowLong(MainForm.Handle,
+                                         GWL_WNDPROC,
+                                         LongInt(@NewWindowProc)));
 end;
 
 procedure TMainForm.SetMainPanel;
@@ -1520,6 +1557,9 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  SetWindowLong(MainForm.Handle,
+                GWL_WNDPROC,
+                LongInt(OldWindowProc));
   IDList.Free;
   WordList.Free;
 end;
@@ -2382,6 +2422,10 @@ begin
   tmrCountdown.Enabled:=true;
 end;
 
+begin
+ {Tell Delphi to hide it's hidden application window for now to avoid}
+ {a "flash" on the taskbar if we halt due to another instance}
+  ShowWindow(Application.Handle, SW_HIDE);
 end.
 
 

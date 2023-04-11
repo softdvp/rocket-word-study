@@ -37,7 +37,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
 OutputDir=Release
-OutputBaseFilename=rws_install
+OutputBaseFilename=rws
 SetupIconFile=rocket-64x64.ico
 Compression=lzma
 SolidCompression=yes
@@ -56,7 +56,7 @@ AppCopyright=Copyright © {#MyAppPublisher} 2023
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}" 
 
 [Dirs]
 
@@ -71,6 +71,8 @@ Source: "{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "db\rws.db"; DestDir: "{#WorkDir}"; Flags: onlyifdoesntexist
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "*.ogg"; DestDir: "{app}"; Flags: ignoreversion
+
 
 Source: "{#Dictionaries}"; DestDir: "{app}\Dictionaries"; Flags: ignoreversion recursesubdirs createallsubdirs
   

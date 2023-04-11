@@ -1,6 +1,6 @@
 (*
 		This Source Code Form is subject to the terms of the MIT
-		License. 
+		License.
 
 		Copyright (c) 2023 Oleg Popov
 		Copyright (c) 2023 Rocket Technologies (https://www.rockettech.com)
@@ -10,6 +10,8 @@
 program rws;
 
 uses
+  windows,
+  SysUtils,
   Vcl.Forms,
   main in 'main.pas' {MainForm},
   options in 'options.pas' {frmOptions},
@@ -24,9 +26,40 @@ uses
   passstudy in 'passstudy.pas' {dlgPassStudy};
 
 {$R *.res}
+var MyNewMsg : DWord;
+
+function AllowSetForegroundWindow(dwProcessId: LongInt): BOOL; stdcall;
+  external user32;
 
 begin
+
+  g_AppName := 'Rocket Word Study';
+
+  {$IFDEF DEBUG}
+  g_AppName :='DEBUG';
+  {$ENDIF}
+
+  CreateMutex(nil, false, PChar(g_AppName));
+
+  if GetLastError = ERROR_ALREADY_EXISTS then
+  begin
+   {Send all windows our custom message - only our other}
+   {instance will recognise it, and restore itself}
+    AllowSetForegroundWindow(-1);
+    MyNewMsg:=RegisterWindowMessage(PChar(g_AppName));
+    SendMessage(HWND_BROADCAST,
+                MyNewMsg,
+                0,
+                0);
+   {Lets quit}
+    Halt(0);
+  end;
+
   Application.Initialize;
+
+  Application.ShowMainForm := true;
+  ShowWindow(Application.Handle, SW_RESTORE);
+
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TMainForm, MainForm);
