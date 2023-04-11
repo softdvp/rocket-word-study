@@ -536,6 +536,7 @@ begin
   if isGrip then
   begin
     FrontRect.Width:=FrontRect.Width-deltaX;
+
     if FrontRect.Width<=0 then
     begin
       isGrip:=false;
@@ -556,7 +557,6 @@ begin
       for i := 1 to 2 do
       begin
         Application.ProcessMessages;
-        Sleep(1);
       end;
 
       imgFlip.Visible:=true;
@@ -569,7 +569,6 @@ begin
       for  i:=1 to 2 do
       begin
         Application.ProcessMessages;
-        Sleep(1);
       end;
 
       imgFlipBuff.Visible:=true;
@@ -588,6 +587,7 @@ begin
     end
     else
     begin
+
       bmpFlip.Width:=BackRect.Width;
 
       bmpFlip.Canvas.StretchDraw(BackRect, bmpBack);
@@ -596,7 +596,6 @@ begin
       for i := 1 to 2 do
       begin
         Application.ProcessMessages;
-        Sleep(1);
       end;
 
       imgFlip.Visible:=true;
@@ -609,12 +608,10 @@ begin
       for  i:=1 to 2 do
       begin
         Application.ProcessMessages;
-        Sleep(1);
       end;
 
       imgFlipBuff.Visible:=true;
       imgFlip.Visible:=false;
-
     end;
   end;
 end;
@@ -1124,6 +1121,7 @@ var
 begin
   try
     actStudy.Enabled:=false;
+    Application.ProcessMessages;
     try
       if isAbort then exit;
       if not Query.Active then exit;
@@ -1166,6 +1164,10 @@ begin
         else
           ShowMessage('Error: REPEATTRANS=0 and REPEATWORD=0');
       end;
+
+      while tmrFlip.Enabled do
+        Application.ProcessMessages;
+
     except on E: Exception do
       ShowMessage('StudyBackCard: '+E.Message);
     end;
@@ -1427,8 +1429,8 @@ begin
   imgFlipBuff.Picture.Bitmap.Assign(bmpFront);
 
   pnlFlip.BringToFront;
-
   tmrFlip.Enabled:=true;
+
 end;
 
 procedure TMainForm.FormActivate(Sender: TObject);
