@@ -94,14 +94,14 @@ type
     lbTranslateS: TLabel;
     lblTranscriptS: TLabel;
     tmrFlip: TTimer;
-    pnlImg: TPanel;
-    imgFront: TImage;
-    imgBack: TImage;
+    pnlFlip: TPanel;
     tmrCountdown: TTimer;
     pge3: TJvStandardPage;
     pnlCountdown: TPanel;
     imgCountdown: TImage;
     lbCoundown: TLabel;
+    imgFlip: TImage;
+    imgFlipBuff: TImage;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -173,6 +173,9 @@ type
     Angle: real;
     TimerCount, LastCount:integer;
 
+    bmpFront, bmpBack, bmpFlip: TBitmap;
+    FrontRect, BackRect:TRect;
+
     procedure SetDictionary(s:string);
     procedure SetStudiedAll(v:integer);
     procedure SetChecked(v:integer);
@@ -213,8 +216,13 @@ type
     procedure FlipCard;
     procedure ShowFullCardS(Query: TFDQuery);
     procedure PanelToImage(Panel: TPanel; Image: TImage);
+    procedure PanelToBitmap(Panel: TPanel; Bitmap: TBitmap);
     procedure ProgressBar(Width, Height: integer; Ang: real);
     procedure InitCountdown;
+
+protected
+    procedure WMEraseBkgnd(var Message: TWMEraseBkgnd);
+      message WM_ERASEBKGND;
 
   public
     property Dictionary:string write SetDictionary;
@@ -239,6 +247,7 @@ end;
 
 var
   MainForm: TMainForm;
+    g_AppName:string;
 
 implementation
 
@@ -518,41 +527,96 @@ end;
 procedure TMainForm.tmrFlipTimer(Sender: TObject);
 var
   deltaX:integer;
+  imgRect:TRect;
+  i:integer;
 
 begin
-  deltaX:=Round(pnlImg.Width / (tmrFlip.Tag / tmrFlip.Interval));
+  deltaX:=Round(pnlFlip.Width / (tmrFlip.Tag / tmrFlip.Interval));
 
   if isGrip then
   begin
-    imgFront.Width:=imgFront.Width-deltaX;
-
-    imgFront.Left:= (pnlImg.Width-imgFront.Width) div 2;
-
-    if imgFront.Width<=0 then
-      begin
-        isGrip:=false;
-        imgBack.Left:=pnlImg.Width div 2;
-        imgBack.BringToFront;
-        imgFront.Width:=0;
-
-        tmrFlip.Enabled:=false;
-        tmrFlip.Enabled:=true;
-      end
-  end
-  else
+    FrontRect.Width:=FrontRect.Width-deltaX;
+    if FrontRect.Width<=0 then
     begin
-      imgBack.Width:=imgBack.Width+deltaX;
-      imgBack.Left:= (pnlImg.Width-imgBack.Width) div 2;
+      isGrip:=false;
 
-      if imgBack.Width>=pnlImg.Width then
+      FrontRect.Width:=0;
+      bmpFlip.Width:=0;
+
+      tmrFlip.Enabled:=false;
+      tmrFlip.Enabled:=true;
+    end
+    else
+    begin
+      bmpFlip.Width:=FrontRect.Width;
+
+      bmpFlip.Canvas.StretchDraw(FrontRect, bmpFront);
+      imgFlip.Picture.Bitmap.Assign(bmpFlip);
+
+      for i := 1 to 2 do
       begin
-        tmrFlip.Enabled:=false;
-        imgBack.Width:=0;
-        pnlMain.BringToFront;
+        Application.ProcessMessages;
+        Sleep(1);
       end;
 
-    end;
+      imgFlip.Visible:=true;
+      imgFlipBuff.Visible:=false;
 
+      Application.ProcessMessages;
+
+      imgFlipBuff.Picture.Bitmap.Assign(bmpFlip);
+
+      for  i:=1 to 2 do
+      begin
+        Application.ProcessMessages;
+        Sleep(1);
+      end;
+
+      imgFlipBuff.Visible:=true;
+      imgFlip.Visible:=false;
+
+    end;
+  end
+  else
+  begin
+    BackRect.Width:=BackRect.Width+deltaX;
+
+    if BackRect.Width>=pnlMain.Width then
+    begin
+      tmrFlip.Enabled:=false;
+      pnlMain.BringToFront;
+    end
+    else
+    begin
+      bmpFlip.Width:=BackRect.Width;
+
+      bmpFlip.Canvas.StretchDraw(BackRect, bmpBack);
+      imgFlip.Picture.Bitmap.Assign(bmpFlip);
+
+      for i := 1 to 2 do
+      begin
+        Application.ProcessMessages;
+        Sleep(1);
+      end;
+
+      imgFlip.Visible:=true;
+      imgFlipBuff.Visible:=false;
+
+      Application.ProcessMessages;
+
+      imgFlipBuff.Picture.Bitmap.Assign(bmpFlip);
+
+      for  i:=1 to 2 do
+      begin
+        Application.ProcessMessages;
+        Sleep(1);
+      end;
+
+      imgFlipBuff.Visible:=true;
+      imgFlip.Visible:=false;
+
+    end;
+  end;
 end;
 
 procedure TMainForm.tmrMainTimer(Sender: TObject);
@@ -672,6 +736,11 @@ begin
   end;
 end;
 
+procedure TMainForm.WMEraseBkgnd(var Message: TWMEraseBkgnd);
+begin
+  Message.Result:=0;
+end;
+
 procedure TMainForm.SetTotal(v: integer);
 begin
   fTotal:=v;
@@ -711,9 +780,11 @@ begin
   if Mistakes>=MaxMistakes then
   begin
     if Query['STATE']<>g_Studied then
+    begin
       Query['STATE']:=1;
-    Query['MISTAKE']:=0;
-    lvl:=1;
+      Query['MISTAKE']:=0;
+      lvl:=1;
+    end;
   end
   else begin
     lvl:=Query['STATE'];
@@ -905,7 +976,7 @@ begin
 
       Studying:=IdList.Count;
 //      Studied:=0;
-      Errors:=0;
+//      Errors:=0;
 
       Id:=RandomId;
 
@@ -1321,10 +1392,11 @@ procedure TMainForm.FlipCard;
 begin
   isGrip:=true;
 
-  imgBack.Width:=pnlImg.Width;
-  imgBack.Top:=0;
-  imgBack.Left:=0;
-  imgBack.Height:=pnlImg.Height;
+  //BackRect.Width:=pnlFlip.Width;
+  BackRect.Top:=0;
+  BackRect.Left:=0;
+  BackRect.Width:=0;
+  BackRect.Height:=pnlFlip.Height;
 
 
   pnlSlip.Left:=0;
@@ -1333,21 +1405,28 @@ begin
   pnlMain.Color:=clWindow;
   pnlSlip.Color:=clInfoBk;
 
-  PanelToImage(pnlMain, imgFront);
-  PanelToImage(pnlSlip, imgBack);
+//  PanelToImage(pnlMain, imgFront);
+//  PanelToImage(pnlSlip, imgBack);
+
+  PanelToBitmap(pnlMain, bmpFront);
+  PanelToBitmap(pnlSlip, bmpBack);
 
   pnlMain.Color:=clInfoBk;
 
   pnlSlip.Left:=-pnlMain.Width;
 
-  imgFront.Width:=pnlImg.Width;
-  imgFront.Left:=0;
-  imgFront.Width:=pnlImg.Width;
+  FrontRect.Left:=0;
+  FrontRect.Top:=0;
+  FrontRect.Width:=pnlMain.Width;
+  FrontRect.Height:=pnlMain.Height;
 
-  imgBack.Width:=0;
+  bmpFlip.Width:=pnlSlip.Width;
 
-  pnlImg.BringToFront;
   pnlSlip.Left := -pnlMain.Width;
+
+  imgFlipBuff.Picture.Bitmap.Assign(bmpFront);
+
+  pnlFlip.BringToFront;
 
   tmrFlip.Enabled:=true;
 end;
@@ -1364,42 +1443,44 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  bmpFront:=TBitmap.Create;
+  bmpBack:=TBitmap.Create;
+  bmpFlip:=TBitmap.Create;
 
-  // Set initial position of pnlBack to be off-screen to the right of pnlFront
-
-  imgFront.Left:=0;
-  imgFront.Width:=pnlImg.Width;
-  imgFront.Height:=pnlImg.Height;
-  imgFront.Top:=0;
-
-  imgBack.Top:=0;
-  imgBack.Height:=pnlImg.Height;
-  imgBack.Width:=0;
-
+  bmpFront.Height:=pnlMain.Height;
+  bmpFront.Width:=pnlMain.Width;
 
   pnlSlip.Top:=0;
   pnlSlip.Width := pnlMain.Width;
   pnlSlip.Height := pnlMain.Height;
   pnlSlip.BorderStyle:=bsSingle;
 
-  // Set initial position of Panel2 to be off-screen to the right of pnlMain
   pnlSlip.Left := -pnlMain.Width;
+
+  bmpBack.Height:=pnlSlip.Height;
+  bmpBack.Width:=pnlSlip.Width;
+
+  bmpFlip.Height:=pnlFlip.Height;
+  bmpFlip.Width:=pnlFlip.Width;
+
+  FrontRect.Top:=0;
+  FrontRect.Left:=0;
+  FrontRect.Height:=bmpFront.Height;
+  FrontRect.Width:=bmpFront.Width;
+
+  FrontRect.Top:=0;
+  FrontRect.Left:=0;
+  FrontRect.Height:=bmpBack.Height;
+  FrontRect.Width:=bmpBack.Width;
 
   IDList:=TList<integer>.Create;
   WordList := TStringList.Create;
 
-  Caption := Caption + ' - ver.' + GetBuildInfoAsString;
-
-  {$IFDEF DEBUG}
-  Caption :='DEBUG';
-  {$ENDIF}
-
+  Caption := g_AppName;
   SetMainPanel;
   plMain.ActivePageIndex:=0;
 
-  imgFront.BringToFront;
   pnlMain.BringToFront;
-
 end;
 
 procedure TMainForm.SetMainPanel;
@@ -2236,6 +2317,15 @@ begin
     end;
     qrMisc.Close
   end;
+end;
+
+procedure TMainForm.PanelToBitmap(Panel: TPanel; Bitmap: TBitmap);
+begin
+    Bitmap.Width := Panel.Width;
+    Bitmap.Height := Panel.Height;
+    Bitmap.Canvas.Brush.Color := Panel.Color;
+    Bitmap.Canvas.FillRect(Rect(0, 0, Panel.Width, Panel.Height));
+    Panel.PaintTo(Bitmap.Canvas.Handle, 0, 0);
 end;
 
 procedure TMainForm.PanelToImage(Panel: TPanel; Image: TImage);
