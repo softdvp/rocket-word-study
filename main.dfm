@@ -14,7 +14,7 @@ object MainForm: TMainForm
   Font.Style = []
   KeyPreview = True
   Menu = mnuMain
-  Position = poScreenCenter
+  Position = poDesktopCenter
   OnActivate = FormActivate
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -343,28 +343,15 @@ object MainForm: TMainForm
         TabOrder = 3
         ExplicitWidth = 672
         ExplicitHeight = 218
-        object imgFlipBuff: TImage
+        object imgFlip: TEsImage
           Left = 1
           Top = 1
           Width = 674
           Height = 217
           Align = alClient
-          Center = True
-          ExplicitLeft = 2
+          Stretch = Center
+          Transparent = False
           ExplicitTop = 2
-        end
-        object imgFlip: TImage
-          Left = 1
-          Top = 1
-          Width = 674
-          Height = 217
-          Align = alClient
-          Center = True
-          Visible = False
-          ExplicitLeft = 416
-          ExplicitTop = 128
-          ExplicitWidth = 105
-          ExplicitHeight = 105
         end
       end
     end

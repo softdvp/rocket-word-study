@@ -19,7 +19,7 @@ uses
   Vcl.ToolWin, JclFileUtils, JvTimer, ACS_Classes, NewACDSAudio, ACS_Vorbis, ShellFileSupport,
   Vcl.AppEvnts, JvExComCtrls, JvComCtrls, JvTabBar, JvPageList, JvExControls, UITypes,
   Vcl.Imaging.pngimage, ACS_DXAudio, JvComponentBase, JvAppEvent, ACS_WinMedia,
-  ACS_smpeg, JvgProgress;
+  ACS_smpeg, JvgProgress, ES.BaseControls, ES.Images;
 
 type
 
@@ -100,8 +100,7 @@ type
     pnlCountdown: TPanel;
     imgCountdown: TImage;
     lbCoundown: TLabel;
-    imgFlip: TImage;
-    imgFlipBuff: TImage;
+    imgFlip: TEsImage;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -584,26 +583,6 @@ begin
       bmpFlip.Canvas.StretchDraw(FrontRect, bmpFront);
       imgFlip.Picture.Bitmap.Assign(bmpFlip);
 
-      for i := 1 to 2 do
-      begin
-        Application.ProcessMessages;
-      end;
-
-      imgFlip.Visible:=true;
-      imgFlipBuff.Visible:=false;
-
-      Application.ProcessMessages;
-
-      imgFlipBuff.Picture.Bitmap.Assign(bmpFlip);
-
-      for  i:=1 to 2 do
-      begin
-        Application.ProcessMessages;
-      end;
-
-      imgFlipBuff.Visible:=true;
-      imgFlip.Visible:=false;
-
     end;
   end
   else
@@ -623,25 +602,6 @@ begin
       bmpFlip.Canvas.StretchDraw(BackRect, bmpBack);
       imgFlip.Picture.Bitmap.Assign(bmpFlip);
 
-      for i := 1 to 2 do
-      begin
-        Application.ProcessMessages;
-      end;
-
-      imgFlip.Visible:=true;
-      imgFlipBuff.Visible:=false;
-
-      Application.ProcessMessages;
-
-      imgFlipBuff.Picture.Bitmap.Assign(bmpFlip);
-
-      for  i:=1 to 2 do
-      begin
-        Application.ProcessMessages;
-      end;
-
-      imgFlipBuff.Visible:=true;
-      imgFlip.Visible:=false;
     end;
   end;
 end;
@@ -1455,8 +1415,6 @@ begin
   bmpFlip.Width:=pnlSlip.Width;
 
   pnlSlip.Left := -pnlMain.Width;
-
-  imgFlipBuff.Picture.Bitmap.Assign(bmpFront);
 
   pnlFlip.BringToFront;
   tmrFlip.Enabled:=true;
