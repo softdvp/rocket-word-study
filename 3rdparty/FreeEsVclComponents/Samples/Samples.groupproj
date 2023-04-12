@@ -1,0 +1,192 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A56E8291-B4F5-4DE9-986E-05E19A8BDC39}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="9PatchLayout\NinePatchLayout.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ActivityBar\ActivityBar.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BufferedChildrens\BufferedChildrens.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Image\ImagesTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Switch\Switch.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RegexEdit\RegExTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="PaintBox\PaintBox.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Labels\Labels.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Panel\Panel.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ShapesOld\ShapesOld.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="SydneySample\SydneySample.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Shapes\Shapes.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="NinePatchLayout">
+        <MSBuild Projects="9PatchLayout\NinePatchLayout.dproj"/>
+    </Target>
+    <Target Name="NinePatchLayout:Clean">
+        <MSBuild Projects="9PatchLayout\NinePatchLayout.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NinePatchLayout:Make">
+        <MSBuild Projects="9PatchLayout\NinePatchLayout.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ActivityBar">
+        <MSBuild Projects="ActivityBar\ActivityBar.dproj"/>
+    </Target>
+    <Target Name="ActivityBar:Clean">
+        <MSBuild Projects="ActivityBar\ActivityBar.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ActivityBar:Make">
+        <MSBuild Projects="ActivityBar\ActivityBar.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BufferedChildrens">
+        <MSBuild Projects="BufferedChildrens\BufferedChildrens.dproj"/>
+    </Target>
+    <Target Name="BufferedChildrens:Clean">
+        <MSBuild Projects="BufferedChildrens\BufferedChildrens.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BufferedChildrens:Make">
+        <MSBuild Projects="BufferedChildrens\BufferedChildrens.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ImagesTest">
+        <MSBuild Projects="Image\ImagesTest.dproj"/>
+    </Target>
+    <Target Name="ImagesTest:Clean">
+        <MSBuild Projects="Image\ImagesTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ImagesTest:Make">
+        <MSBuild Projects="Image\ImagesTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Switch">
+        <MSBuild Projects="Switch\Switch.dproj"/>
+    </Target>
+    <Target Name="Switch:Clean">
+        <MSBuild Projects="Switch\Switch.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Switch:Make">
+        <MSBuild Projects="Switch\Switch.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="RegExTest">
+        <MSBuild Projects="RegexEdit\RegExTest.dproj"/>
+    </Target>
+    <Target Name="RegExTest:Clean">
+        <MSBuild Projects="RegexEdit\RegExTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RegExTest:Make">
+        <MSBuild Projects="RegexEdit\RegExTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PaintBox">
+        <MSBuild Projects="PaintBox\PaintBox.dproj"/>
+    </Target>
+    <Target Name="PaintBox:Clean">
+        <MSBuild Projects="PaintBox\PaintBox.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PaintBox:Make">
+        <MSBuild Projects="PaintBox\PaintBox.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Labels">
+        <MSBuild Projects="Labels\Labels.dproj"/>
+    </Target>
+    <Target Name="Labels:Clean">
+        <MSBuild Projects="Labels\Labels.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Labels:Make">
+        <MSBuild Projects="Labels\Labels.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Panel">
+        <MSBuild Projects="Panel\Panel.dproj"/>
+    </Target>
+    <Target Name="Panel:Clean">
+        <MSBuild Projects="Panel\Panel.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Panel:Make">
+        <MSBuild Projects="Panel\Panel.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ShapesOld">
+        <MSBuild Projects="ShapesOld\ShapesOld.dproj"/>
+    </Target>
+    <Target Name="ShapesOld:Clean">
+        <MSBuild Projects="ShapesOld\ShapesOld.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ShapesOld:Make">
+        <MSBuild Projects="ShapesOld\ShapesOld.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SydneySample">
+        <MSBuild Projects="SydneySample\SydneySample.dproj"/>
+    </Target>
+    <Target Name="SydneySample:Clean">
+        <MSBuild Projects="SydneySample\SydneySample.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SydneySample:Make">
+        <MSBuild Projects="SydneySample\SydneySample.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Shapes">
+        <MSBuild Projects="Shapes\Shapes.dproj"/>
+    </Target>
+    <Target Name="Shapes:Clean">
+        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Shapes:Make">
+        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo">
+        <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo:Clean">
+        <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo:Make">
+        <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TEsControlListCheckBoxDemo">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj"/>
+    </Target>
+    <Target Name="TEsControlListCheckBoxDemo:Clean">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TEsControlListCheckBoxDemo:Make">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes;TBitmapPixelsDemo;TEsControlListCheckBoxDemo"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean;TBitmapPixelsDemo:Clean;TEsControlListCheckBoxDemo:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make;TBitmapPixelsDemo:Make;TEsControlListCheckBoxDemo:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
