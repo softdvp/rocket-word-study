@@ -3,8 +3,8 @@ object frmOptions: TfrmOptions
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 637
-  ClientWidth = 614
+  ClientHeight = 636
+  ClientWidth = 610
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,42 +19,48 @@ object frmOptions: TfrmOptions
     Top = 24
     Width = 113
     Height = 15
-    Caption = 'Time for answer, sec :'
+    Caption = '&Time for answer, sec :'
+    FocusControl = DBEdit1
   end
   object Label3: TLabel
     Left = 24
     Top = 53
     Width = 142
     Height = 15
-    Caption = 'Number of words to learn :'
+    Caption = '&Number of words to learn :'
+    FocusControl = DBEdit3
   end
   object Label5: TLabel
     Left = 272
     Top = 24
     Width = 152
     Height = 15
-    Caption = 'Inactivity time to pause, sec :'
+    Caption = '&Inactivity time to pause, sec :'
+    FocusControl = DBEdit2
   end
   object Label6: TLabel
     Left = 272
     Top = 53
     Width = 78
     Height = 15
-    Caption = 'Errors to reset :'
+    Caption = '&Errors to reset :'
+    FocusControl = DBEdit4
   end
   object Label2: TLabel
     Left = 24
     Top = 82
     Width = 133
     Height = 15
-    Caption = 'Time to omit a word, sec '
+    Caption = 'Time to &omit a word, sec '
+    FocusControl = DBEdit5
   end
   object Label4: TLabel
     Left = 272
     Top = 82
     Width = 217
     Height = 15
-    Caption = 'Time to show a word in spritz mode, sec: '
+    Caption = 'Time to &show a word in spritz mode, sec: '
+    FocusControl = DBEdit6
   end
   object GroupBox1: TGroupBox
     Left = 24
@@ -68,7 +74,8 @@ object frmOptions: TfrmOptions
       Top = 24
       Width = 29
       Height = 15
-      Caption = 'Word'
+      Caption = '&Word'
+      FocusControl = edSoundLib
     end
     object edSoundLib: TJvDirectoryEdit
       Left = 16
@@ -144,15 +151,12 @@ object frmOptions: TfrmOptions
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 26
-      ExplicitTop = 202
-      ExplicitWidth = 534
       object btnDel: TButton
         Left = 432
         Top = 8
         Width = 75
         Height = 25
-        Caption = 'Delete'
+        Caption = '&Delete'
         TabOrder = 0
         OnClick = btnDelClick
       end
@@ -163,7 +167,7 @@ object frmOptions: TfrmOptions
     Top = 599
     Width = 75
     Height = 25
-    Caption = 'Ok'
+    Caption = '&Ok'
     Default = True
     ModalResult = 1
     TabOrder = 7
@@ -171,11 +175,11 @@ object frmOptions: TfrmOptions
   end
   object btnCancel: TButton
     Left = 458
-    Top = 599
+    Top = 604
     Width = 75
     Height = 25
     Cancel = True
-    Caption = 'Cancel'
+    Caption = '&Cancel'
     ModalResult = 2
     TabOrder = 8
     OnClick = btnCancelClick
@@ -212,7 +216,7 @@ object frmOptions: TfrmOptions
     Top = 450
     Width = 184
     Height = 17
-    Caption = 'Pronounce words'
+    Caption = '&Pronounce words'
     DataField = 'PRONOUNCE'
     DataSource = dm.dsOptions
     TabOrder = 5

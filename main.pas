@@ -6,7 +6,7 @@
 		Copyright (c) 2023 Rocket Technologies (https://www.rockettech.com)
 
 *)
-{$DEFINE MOUSECLICK}
+//{$DEFINE MOUSECLICK}
 unit main;
 
 interface
@@ -234,7 +234,7 @@ protected
     property Studying:integer read fStudying write SetStudying;
     property Errors:integer read fErrors write SetErrors;
     procedure Pronounce(word:string);
-    procedure PronounceWords(words: string);
+    procedure PronounceWords;
 
     procedure SetMainPanel;
     function TranslByNum(s:string; n:integer):string;
@@ -243,6 +243,8 @@ protected
     function CheckRepeat: boolean;
     function DiffTimeString(t: TDateTime): string;
     function StudyMinTime: TDateTime;
+    procedure StartPronounce(words: string);
+
 end;
 
 var
@@ -556,8 +558,6 @@ end;
 procedure TMainForm.tmrFlipTimer(Sender: TObject);
 var
   deltaX:integer;
-
-  i:integer;
 
 begin
   deltaX:=Round(pnlFlip.Width / (tmrFlip.Tag / tmrFlip.Interval));
@@ -1568,7 +1568,7 @@ end;
 procedure TMainForm.actSoundExecute(Sender: TObject);
 begin
   if not AudioBusy then
-    PronounceWords(LastTranslation);
+    StartPronounce(LastTranslation);
 end;
 
 procedure TMainForm.actStopExecute(Sender: TObject);
@@ -1903,7 +1903,7 @@ begin
 
     lblTranslate.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
     if not AudioBusy then
-      PronounceWords(lblWord.Caption);
+      StartPronounce(lblWord.Caption);
   except
 
   on E: Exception do
@@ -1934,7 +1934,7 @@ begin
     LastTranslation:=lblWord.Caption;
 
     if not AudioBusy then
-      PronounceWords(lblWord.Caption);
+      StartPronounce(lblWord.Caption);
   except
 
   on E: Exception do
@@ -2090,13 +2090,59 @@ begin
     btnOk.Action.Execute;
 end;
 
-procedure TMainForm.PronounceWords(words: string);
+procedure TMainForm.StartPronounce(words: string);
+var
+  Path, FN, word: string;
+  isExist:boolean;
+
+begin
+  if words='' then exit;
+
+  with dm do
+  begin
+
+    if not qrOptions.FieldByName('PRONOUNCE').AsBoolean then
+      exit;
+
+    isExist:=false;
+
+    Path:=dm.qrOptions.FieldByName('SOUNDLIB').AsString;
+
+    if JclFileUtils.PathIsAbsolute(Path) then
+        Path:=IncludeTrailingPathDelimiter(PathSearchAndQualify(qrOptions.FieldByName('SOUNDLIB').AsString))
+    else Path:=IncludeTrailingPathDelimiter(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+Path);
+
+    FN:=Path+words+'.ogg';
+
+    if FileExists(FN) then
+    begin
+      word:=words;
+      isExist:=true;
+      WordList.Add(words)
+    end
+    else
+    begin
+      FN:=Path+words+'.mp3';
+
+      if FileExists(FN) then
+      begin
+        word:=words;
+        isExist:=true;
+        WordList.Add(words)
+      end
+      else
+        ExtractStrings([' ',',','?', '/', '(',')'], [], PChar(words), WordList);
+    end;
+  end;
+
+  PronounceWords
+end;
+
+procedure TMainForm.PronounceWords;
 var
   w:string;
 begin
-  if words='' then exit;
-  ExtractStrings([' ',',','?', '/', '(',')'], [], PChar(words), WordList);
-  
+
   try
     w:=trim(WordList[PronounceWord]);
     Pronounce(w);
@@ -2143,52 +2189,50 @@ begin
   begin
     if dxOut.Status <> tosIdle then exit;
 
-    if qrOptions.FieldByName('PRONOUNCE').AsBoolean then
+    Path:=qrOptions.FieldByName('SOUNDLIB').AsString;
+
+    if JclFileUtils.PathIsAbsolute(Path) then
+        Path:=IncludeTrailingPathDelimiter(PathSearchAndQualify(qrOptions.FieldByName('SOUNDLIB').AsString))
+    else Path:=IncludeTrailingPathDelimiter(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+Path);
+
+    CanPronounce:=false;
+
+    FN:=Path+word+'.ogg';
+
+    if FileExists(FN) then
     begin
-      Path:=qrOptions.FieldByName('SOUNDLIB').AsString;
+      dxOut.Input:=inOgg;
+      inOgg.FileName:=FN;
 
-      if JclFileUtils.PathIsAbsolute(Path) then
-          Path:=IncludeTrailingPathDelimiter(PathSearchAndQualify(qrOptions.FieldByName('SOUNDLIB').AsString))
-      else Path:=IncludeTrailingPathDelimiter(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+Path);
-
-      CanPronounce:=false;
-
-      FN:=Path+word+'.ogg';
+      CanPronounce:=inOgg.Valid;
+    end
+    else
+    begin
+      FN:=Path+word+'.mp3';
 
       if FileExists(FN) then
       begin
-        dxOut.Input:=inOgg;
-        inOgg.FileName:=FN;
+        dxOut.Input:=inMP3;
+        inMP3.FileName:=FN;
 
-        CanPronounce:=inOgg.Valid;
-      end
-      else
-      begin
-        FN:=Path+word+'.mp3';
-
-        if FileExists(FN) then
-        begin
-          dxOut.Input:=inMP3;
-          inMP3.FileName:=FN;
-
-          CanPronounce:=inMP3.Valid;
-        end;
-      end;
-
-      if CanPronounce then
-      begin
-        if not AudioBusy then
-        begin
-          if dxOut.Status <> tosIdle then exit;
-          dxOut.Run;
-        end;
-      end
-      else
-      begin
-        PronounceWord:=0;
-        WordList.Clear
+        CanPronounce:=inMP3.Valid;
       end;
     end;
+
+    if CanPronounce then
+    begin
+      if not AudioBusy then
+      begin
+        if dxOut.Status <> tosIdle then exit;
+        dxOut.Run;
+      end;
+    end
+    else
+    begin
+      PronounceWord:=0;
+      WordList.Clear
+    end;
+
   end;
 end;
 

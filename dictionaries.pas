@@ -16,7 +16,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Data.DB, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,FireDAC.Stan.Param, IOUtils,
   Vcl.DBCtrls, System.ImageList, Vcl.ImgList, RegularExpressions, JvDialogs,
-  Vcl.ExtDlgs, Vcl.ComCtrls, Ex_Grid, Ex_DBGrid, System.Actions, Vcl.ActnList, ACS_DXAudio;
+  Vcl.ExtDlgs, Vcl.ComCtrls, Ex_Grid, Ex_DBGrid, System.Actions, Vcl.ActnList, ACS_DXAudio,
+  JvComponentBase, JvAppHotKey;
 
 const
   IsChecked : array[Boolean] of Integer =
@@ -90,6 +91,7 @@ type
       Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbgWordsDblClick(Sender: TObject);
+    procedure hkSoundHotKey(Sender: TObject);
   private
     LastWord : string;
     function GetWordFilterStr: string;
@@ -594,7 +596,7 @@ begin
   LastWord:=word;
 
   if (not MainForm.AudioBusy) and dbgWords.Focused then
-    MainForm.PronounceWords(word);
+    MainForm.StartPronounce(word);
 
 end;
 
@@ -652,7 +654,7 @@ begin
       dbgWords.DataSource.DataSet.Prior;
 
       if (*not MainForm.SoundBusy*) (not MainForm.AudioBusy) and dbgWords.Focused then
-        MainForm.PronounceWords(word);
+        MainForm.StartPronounce(word);
     end;
 
     VK_Up :
@@ -664,7 +666,7 @@ begin
       dbgWords.DataSource.DataSet.Next;
 
       if (not MainForm.AudioBusy) and dbgWords.Focused then
-        MainForm.PronounceWords(word);
+        MainForm.StartPronounce(word);
     end;
   end;
 end;
@@ -705,8 +707,9 @@ begin
   case Key of
     VK_F2:
       if not MainForm.AudioBusy then
-        MainForm.PronounceWords(LastWord);
+        MainForm.StartPronounce(LastWord);
   end;
+
 end;
 
 procedure TfrmDict.rbAllClick(Sender: TObject);
@@ -728,6 +731,12 @@ begin
   end
   else
     Result:='';
+end;
+
+procedure TfrmDict.hkSoundHotKey(Sender: TObject);
+begin
+(*      if not MainForm.AudioBusy then
+        MainForm.StartPronounce(LastWord);*)
 end;
 
 function TfrmDict.GetTranslationFilterStr:string;
@@ -799,7 +808,7 @@ end;
 procedure TfrmDict.SpeedButton1Click(Sender: TObject);
 begin
   if not MainForm.AudioBusy then
-    MainForm.PronounceWords(LastWord);
+    MainForm.StartPronounce(LastWord);
 end;
 
 procedure TfrmDict.SelectWords(Sel:boolean);

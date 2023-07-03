@@ -33,6 +33,7 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 25
+      Caption = '&OK'
       Kind = bkOK
       NumGlyphs = 2
       TabOrder = 0
@@ -43,6 +44,7 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 24
+      Caption = '&Cancel'
       Kind = bkCancel
       NumGlyphs = 2
       TabOrder = 2
@@ -53,7 +55,7 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 25
-      Caption = 'Apply'
+      Caption = '&Apply'
       TabOrder = 1
       OnClick = btnApplyClick
     end
@@ -65,8 +67,6 @@ object frmDict: TfrmDict
     Height = 438
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 837
-    ExplicitHeight = 437
     object GroupBox1: TGroupBox
       Left = 1
       Top = 1
@@ -179,8 +179,6 @@ object frmDict: TfrmDict
       Align = alRight
       Caption = 'Words'
       TabOrder = 1
-      ExplicitLeft = 413
-      ExplicitHeight = 435
       object Panel3: TPanel
         Left = 2
         Top = 17
@@ -189,11 +187,12 @@ object frmDict: TfrmDict
         Align = alTop
         TabOrder = 0
         object Label1: TLabel
-          Left = 10
+          Left = 11
           Top = 61
-          Width = 32
+          Width = 29
           Height = 15
-          Caption = 'Filter :'
+          Caption = '&Filter:'
+          FocusControl = edFilter
         end
         object RadioGroup1: TRadioGroup
           Left = 1
@@ -246,7 +245,7 @@ object frmDict: TfrmDict
           Top = 57
           Width = 75
           Height = 25
-          Caption = 'Clear'
+          Caption = 'C&lear'
           TabOrder = 5
           OnClick = btnClearClick
         end
@@ -276,7 +275,7 @@ object frmDict: TfrmDict
           Top = 6
           Width = 75
           Height = 25
-          Caption = 'Select all'
+          Caption = '&Select all'
           TabOrder = 0
           OnClick = btnSelectAllClick
         end
@@ -285,7 +284,7 @@ object frmDict: TfrmDict
           Top = 6
           Width = 75
           Height = 25
-          Caption = 'Deselect all'
+          Caption = '&Deselect all'
           TabOrder = 1
           OnClick = btnUselectAllClick
         end
@@ -307,7 +306,6 @@ object frmDict: TfrmDict
         HorzScrollBar.Visible = False
         RowSelect = True
         ShowCellTips = False
-        ShowHeader = False
         TabOrder = 2
         OnCellAcceptCursor = dbgWordsCellAcceptCursor
         OnCellClick = dbgWordsCellClick
@@ -320,6 +318,7 @@ object frmDict: TfrmDict
             AlignEdit = True
             Caption = ' '
             CheckKind = gcCheckBox
+            MaxWidth = 20
             DefWidth = 20
             FieldName = 'SELECTED'
             DefaultColumn = False
@@ -327,7 +326,7 @@ object frmDict: TfrmDict
           item
             Caption = ' '
             EditStyle = geEllipsis
-            DefWidth = 100
+            DefWidth = 170
             FieldName = 'WORD'
             DefaultColumn = False
           end
