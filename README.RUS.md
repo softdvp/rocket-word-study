@@ -61,7 +61,7 @@ ___
 
 Youtube:
 
-[![Youtube: Rocket Word Study](http://i3.ytimg.com/vi/tDWoGkKgLvE/hqdefault.jpg)](https://youtu.be/tDWoGkKgLvE)
+[![Youtube: Rocket Word Study](https://img.youtube.com/vi/tDWoGkKgLvE/mqdefault.jpg)](https://youtu.be/tDWoGkKgLvE)
 
 Ссылка на установочный пакет программы:
 <https://rockettech.com/rws/rws.exe>
