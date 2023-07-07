@@ -59,6 +59,10 @@ __Однокнопочный интерфейс__ программы делае�
 
 ___
 
+Youtube:
+
+[![Youtube: Rocket Word Study](https://i9.ytimg.com/vi_webp/tDWoGkKgLvE/mqdefault.webp?v=64a7b55e&sqp=CPj9nqUG&rs=AOn4CLAx96rd6kpH323rRfEjY_bfsAAm7g)](https://youtu.be/tDWoGkKgLvE)
+
 Ссылка на установочный пакет программы:
 <https://rockettech.com/rws/rws.exe>
 
