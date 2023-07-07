@@ -34,6 +34,7 @@ object dm: Tdm
     Top = 72
   end
   object qrWords: TFDQuery
+    AfterScroll = qrWordsAfterScroll
     IndexFieldNames = 'DICTID'
     MasterSource = dsDict
     MasterFields = 'ID'
@@ -127,7 +128,8 @@ object dm: Tdm
     Connection = fdcRWS
     SQL.Strings = (
       'UPDATE WORDS'
-      'SET SELECTED=:SELECTED')
+      'SET SELECTED=:SELECTED'
+      'WHERE DICTID=:ID')
     Left = 360
     Top = 8
     ParamData = <
@@ -135,6 +137,10 @@ object dm: Tdm
         Name = 'SELECTED'
         ParamType = ptInput
         Value = Null
+      end
+      item
+        Name = 'ID'
+        ParamType = ptInput
       end>
   end
   object qrStudy: TFDQuery

@@ -34,7 +34,6 @@ type
     btnCancel: TBitBtn;
     Panel2: TPanel;
     GroupBox1: TGroupBox;
-    dbgDict: TDBGrid;
     GroupBox2: TGroupBox;
     Panel3: TPanel;
     RadioGroup1: TRadioGroup;
@@ -52,7 +51,7 @@ type
     btnClear: TButton;
     dlgExport: TSaveTextFileDialog;
     dlgImport: TOpenTextFileDialog;
-    StatusBar1: TStatusBar;
+    sbDict: TStatusBar;
     Panel5: TPanel;
     btnImport: TButton;
     btnExport: TButton;
@@ -61,6 +60,7 @@ type
     btnDelStats: TButton;
     dbgWords: TDBGridView;
     ActionList1: TActionList;
+    dbgDict: TDBGridView;
     procedure btnImportClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     
@@ -92,6 +92,11 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbgWordsDblClick(Sender: TObject);
     procedure hkSoundHotKey(Sender: TObject);
+    procedure dbgDictColEnter(Sender: TObject);
+    procedure dbgDictKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure dbgDictCellAcceptCursor(Sender: TObject; Cell: TGridCell;
+      var Accept: Boolean);
   private
     LastWord : string;
     function GetWordFilterStr: string;
@@ -103,9 +108,12 @@ type
     procedure ExportRwsFile(Sl:TStringList; delimiter:char);
     procedure ExportCvsFile(Sl:TStringList; delimiter:char);
     function GetTranslationFilterStr: string;
+    procedure CheckedNum;
+    procedure RowNo;
     { Private declarations }
   public
     { Public declarations }
+    procedure Scroll;
   end;
 
 var
@@ -147,7 +155,7 @@ end;
 
 procedure TfrmDict.btnCancelClick(Sender: TObject);
 begin
-  dbgDict.BeginUpdate;
+//  dbgDict.BeginUpdate;
 
   with dm do
   begin
@@ -169,7 +177,7 @@ begin
     qrWords.Refresh;
   end;
 
-  dbgDict.EndUpdate;
+//  dbgDict.EndUpdate;
 end;
 
 procedure TfrmDict.btnClearClick(Sender: TObject);
@@ -362,6 +370,9 @@ begin
 
       with dm do
       begin
+        qrWords.DisableControls;
+        qrDict.DisableControls;
+
         fn:=ExtractFileName(dlgImport.FileName);
         qrDicImport.ParamByName('NAME').AsString:=ChangeFileExt(fn, '');
         qrDicImport.ExecSQL;
@@ -401,12 +412,14 @@ begin
           end;
         end;
 
-      qrDict.Refresh;
-      qrDict.Locate('ID', LastDictID,[]);
-      qrOptions.Edit;
-      qrOptions.FieldByName('DICTIONARY').AsInteger:=LastDictID;
-      qrOptions.Post;
-    end;
+        qrDict.Refresh;
+        qrDict.Locate('ID', LastDictID,[]);
+        qrOptions.Edit;
+        qrOptions.FieldByName('DICTIONARY').AsInteger:=LastDictID;
+        qrOptions.Post;
+        qrWords.EnableControls;
+        qrDict.EnableControls;
+      end;
 
     except
 
@@ -522,6 +535,7 @@ end;
 
 procedure TfrmDict.btnImportClick(Sender: TObject);
 begin
+
   if dlgImport.Execute then
     if FileExists(dlgImport.FileName) then
     begin
@@ -535,6 +549,7 @@ end;
 procedure TfrmDict.btnSelectAllClick(Sender: TObject);
 begin
   SelectWords(true);
+
 end;
 
 procedure TfrmDict.btnUselectAllClick(Sender: TObject);
@@ -565,6 +580,12 @@ begin
     end;
 end;
 
+procedure TfrmDict.dbgDictCellAcceptCursor(Sender: TObject; Cell: TGridCell;
+  var Accept: Boolean);
+begin
+  CheckedNum
+end;
+
 procedure TfrmDict.dbgDictCellClick(Column: TColumn);
 begin
   with dm do
@@ -572,6 +593,43 @@ begin
     CurrDict:=qrDict['ID'];
     CurrWord:=qrWords.FieldByName('ID').AsInteger;
   end;
+
+  CheckedNum;
+end;
+
+procedure TfrmDict.dbgDictColEnter(Sender: TObject);
+begin
+  CheckedNum
+end;
+
+procedure TfrmDict.dbgDictKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  CheckedNum
+end;
+
+procedure TfrmDict.CheckedNum;
+begin
+  with dm do
+  begin
+      qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1';
+      qrMisc.Params[0].AsInteger:=qrDict['ID'];
+      qrMisc.Open;
+      sbDict.Panels[0].Text:=IntToStr(qrMisc['CNT']);
+  end;
+
+end;
+
+procedure TfrmDict.RowNo;
+var
+  SI: TScrollInfo;
+begin
+  ZeroMemory(@SI,SizeOf(SI));
+  SI.cbSize := SizeOf(SI);
+  SI.fMask := SIF_ALL;
+  GetScrollInfo(dbgWords.Handle, SB_VERT, SI);
+
+  sbDict.Panels[1].Text:=IntToStr(SI.nPos);
 end;
 
 procedure TfrmDict.dbgWordsCellAcceptCursor(Sender: TObject; Cell: TGridCell;
@@ -579,19 +637,20 @@ procedure TfrmDict.dbgWordsCellAcceptCursor(Sender: TObject; Cell: TGridCell;
 var
   word: string;
 begin
-  word:=dm.qrWords.FieldByName('WORD').AsString;
-
-  if (LastWord=word) or (Cell.Col <> 1) then exit;
-
-  LastWord:=word;
+  RowNo;
 end;
 
 procedure TfrmDict.dbgWordsCellClick(Sender: TObject; Cell: TGridCell;
   Shift: TShiftState; X, Y: Integer);
+begin
+  Scroll
+end;
+
+procedure TfrmDict.Scroll;
 var
   word: string;
 begin
-
+  RowNo;
   word:=dm.qrWords.FieldByName('WORD').AsString;
   LastWord:=word;
 
@@ -599,6 +658,7 @@ begin
     MainForm.StartPronounce(word);
 
 end;
+
 
 procedure TfrmDict.dbgWordsCheckClick(Sender: TObject; Cell: TGridCell);
 begin
@@ -608,6 +668,8 @@ begin
     qrWords['SELECTED']:=not qrWords['SELECTED'];
     qrWords.Post;
   end;
+
+  CheckedNum;
 end;
 
 procedure TfrmDict.dbgWordsDblClick(Sender: TObject);
@@ -647,26 +709,28 @@ begin
   case Key of
     VK_Down :
     begin
-      dbgWords.DataSource.DataSet.Next;
+      dm.CanPronounce:=true;
+(*      dbgWords.DataSource.DataSet.Next;
       word:=dm.qrWords.FieldByName('WORD').AsString;
 
       LastWord:=word;
       dbgWords.DataSource.DataSet.Prior;
 
-      if (*not MainForm.SoundBusy*) (not MainForm.AudioBusy) and dbgWords.Focused then
-        MainForm.StartPronounce(word);
+      if (not MainForm.AudioBusy) and dbgWords.Focused then
+        MainForm.StartPronounce(word);*)
     end;
 
     VK_Up :
     begin
-      dbgWords.DataSource.DataSet.Prior;
+      dm.CanPronounce:=true;
+(*      dbgWords.DataSource.DataSet.Prior;
       word:=dm.qrWords.FieldByName('WORD').AsString;
 
       LastWord:=word;
       dbgWords.DataSource.DataSet.Next;
 
       if (not MainForm.AudioBusy) and dbgWords.Focused then
-        MainForm.StartPronounce(word);
+        MainForm.StartPronounce(word);*)
     end;
   end;
 end;
@@ -679,6 +743,7 @@ end;
 procedure TfrmDict.FormActivate(Sender: TObject);
 begin
   frmDict.SetFocusedControl(btnOk);
+  CheckedNum;
 
   with dm do
   begin
@@ -816,10 +881,13 @@ begin
   with dm do
   begin
     qrSelectWords.Params[0].AsBoolean:=Sel;
+    qrSelectWords.ParamByName('ID').AsString:=qrDict.FieldByName('ID').AsString;
+
     qrWords.DisableControls;
     qrSelectWords.ExecSQL;
     qrWords.Refresh;
     qrWords.EnableControls;
+    CheckedNum;
   end;
 end;
 

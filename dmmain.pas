@@ -1,6 +1,6 @@
 (*
 		This Source Code Form is subject to the terms of the MIT
-		License. 
+		License.
 
 		Copyright (c) 2023 Oleg Popov
 		Copyright (c) 2023 Rocket Technologies (https://www.rockettech.com)
@@ -81,10 +81,12 @@ type
     qrExport: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure dsWordsDataChange(Sender: TObject; Field: TField);
+    procedure qrWordsAfterScroll(DataSet: TDataSet);
   private
 
   public
     CurrDict, CurrWord: integer;
+    CanPronounce:boolean;
     function GetLastInsertRowID: Int64;
   end;
 
@@ -97,7 +99,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses ShellFileSupport, dictionaries;
+uses ShellFileSupport, dictionaries, main;
 
 {$R *.dfm}
 procedure Tdm.DataModuleCreate(Sender: TObject);
@@ -152,6 +154,15 @@ end;
 function Tdm.GetLastInsertRowID: Int64;
 begin
   Result := Int64(fdcRWS.GetLastAutoGenValue(''));
+end;
+
+procedure Tdm.qrWordsAfterScroll(DataSet: TDataSet);
+begin
+  if (frmDict<>nil) and frmDict.Active and CanPronounce then
+  begin
+    frmDict.Scroll;
+    CanPronounce:=false
+  end;
 end;
 
 end.

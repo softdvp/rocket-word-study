@@ -67,6 +67,8 @@ object frmDict: TfrmDict
     Height = 438
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 837
+    ExplicitHeight = 437
     object GroupBox1: TGroupBox
       Left = 1
       Top = 1
@@ -77,38 +79,13 @@ object frmDict: TfrmDict
       TabOrder = 0
       ExplicitWidth = 412
       ExplicitHeight = 435
-      object dbgDict: TDBGrid
-        Left = 2
-        Top = 17
-        Width = 412
-        Height = 376
-        Align = alClient
-        DataSource = dm.dsDict
-        Options = [dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-        ReadOnly = True
-        TabOrder = 0
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -12
-        TitleFont.Name = 'Segoe UI'
-        TitleFont.Style = []
-        OnCellClick = dbgDictCellClick
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'NAME'
-            Title.Caption = 'Dictionary'
-            Width = 260
-            Visible = True
-          end>
-      end
       object Panel5: TPanel
         Left = 2
         Top = 393
         Width = 412
         Height = 41
         Align = alBottom
-        TabOrder = 1
+        TabOrder = 0
         ExplicitTop = 392
         ExplicitWidth = 408
         object btnImport: TButton
@@ -170,6 +147,27 @@ object frmDict: TfrmDict
           OnClick = btnDelStatsClick
         end
       end
+      object dbgDict: TDBGridView
+        Left = 2
+        Top = 17
+        Width = 412
+        Height = 376
+        Align = alClient
+        AllowDeleteRecord = False
+        AllowEdit = False
+        AllowInsertRecord = False
+        DataSource = dm.dsDict
+        DefaultLayout = False
+        ReadOnly = True
+        ShowCellTips = False
+        ShowHeader = False
+        TabOrder = 1
+        OnCellAcceptCursor = dbgDictCellAcceptCursor
+        Columns = <
+          item
+            FieldName = 'NAME'
+          end>
+      end
     end
     object GroupBox2: TGroupBox
       Left = 417
@@ -179,6 +177,8 @@ object frmDict: TfrmDict
       Align = alRight
       Caption = 'Words'
       TabOrder = 1
+      ExplicitLeft = 413
+      ExplicitHeight = 435
       object Panel3: TPanel
         Left = 2
         Top = 17
@@ -339,12 +339,18 @@ object frmDict: TfrmDict
       end
     end
   end
-  object StatusBar1: TStatusBar
+  object sbDict: TStatusBar
     Left = 0
     Top = 473
     Width = 841
     Height = 26
-    Panels = <>
+    Panels = <
+      item
+        Width = 50
+      end
+      item
+        Width = 50
+      end>
     ExplicitTop = 472
     ExplicitWidth = 837
   end
