@@ -61,6 +61,8 @@ ___
 
 Youtube:
 
+[![Youtube: Rocket Word Study](https://logodownload.org/wp-content/uploads/2014/10/youtube-logo-4-3.png)](https://youtu.be/tDWoGkKgLvE)
+
 [![Youtube: Rocket Word Study](https://img.youtube.com/vi/tDWoGkKgLvE/mqdefault.jpg)](https://youtu.be/tDWoGkKgLvE)
 
 Ссылка на установочный пакет программы:
