@@ -662,7 +662,8 @@ begin
 
   if (not MainForm.AudioBusy) and dbgWords.Focused then
     MainForm.StartPronounce(word);
-  dm.CanPronounce:=false;
+
+  dm.DoPron:=false;
 end;
 
 
@@ -715,7 +716,7 @@ begin
   case Key of
     VK_Down :
     begin
-      dm.CanPronounce:=true;
+      dm.DoPron:=true;
 (*      dbgWords.DataSource.DataSet.Next;
       word:=dm.qrWords.FieldByName('WORD').AsString;
 
@@ -728,7 +729,7 @@ begin
 
     VK_Up :
     begin
-      dm.CanPronounce:=true;
+      dm.DoPron:=true;
 (*      dbgWords.DataSource.DataSet.Prior;
       word:=dm.qrWords.FieldByName('WORD').AsString;
 

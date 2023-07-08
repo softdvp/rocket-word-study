@@ -86,7 +86,7 @@ type
 
   public
     CurrDict, CurrWord: integer;
-    CanPronounce:boolean;
+    DoPron:boolean;
     function GetLastInsertRowID: Int64;
   end;
 
@@ -158,7 +158,7 @@ end;
 
 procedure Tdm.qrWordsAfterScroll(DataSet: TDataSet);
 begin
-  if (frmDict<>nil) and frmDict.Active and CanPronounce then
+  if (frmDict<>nil) and frmDict.Active and DoPron then
   begin
     frmDict.Scroll;
   end;

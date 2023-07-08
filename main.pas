@@ -2183,7 +2183,7 @@ end;
 procedure TMainForm.Pronounce;
 var
   Path, FN: string;
-  CanPronounce:boolean;
+  CanPron:boolean;
 begin
   with dm do
   begin
@@ -2195,7 +2195,7 @@ begin
         Path:=IncludeTrailingPathDelimiter(PathSearchAndQualify(qrOptions.FieldByName('SOUNDLIB').AsString))
     else Path:=IncludeTrailingPathDelimiter(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+Path);
 
-    CanPronounce:=false;
+    CanPron:=false;
 
     FN:=Path+word+'.ogg';
 
@@ -2204,7 +2204,7 @@ begin
       dxOut.Input:=inOgg;
       inOgg.FileName:=FN;
 
-      CanPronounce:=inOgg.Valid;
+      CanPron:=inOgg.Valid;
     end
     else
     begin
@@ -2215,11 +2215,11 @@ begin
         dxOut.Input:=inMP3;
         inMP3.FileName:=FN;
 
-        CanPronounce:=inMP3.Valid;
+        CanPron:=inMP3.Valid;
       end;
     end;
 
-    if CanPronounce then
+    if CanPron then
     begin
       if not AudioBusy then
       begin
