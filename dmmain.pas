@@ -161,7 +161,6 @@ begin
   if (frmDict<>nil) and frmDict.Active and CanPronounce then
   begin
     frmDict.Scroll;
-    CanPronounce:=false
   end;
 end;
 

@@ -350,6 +350,9 @@ object frmDict: TfrmDict
       end
       item
         Width = 50
+      end
+      item
+        Width = 50
       end>
     ExplicitTop = 472
     ExplicitWidth = 837

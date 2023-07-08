@@ -616,6 +616,12 @@ begin
       qrMisc.Params[0].AsInteger:=qrDict['ID'];
       qrMisc.Open;
       sbDict.Panels[0].Text:=IntToStr(qrMisc['CNT']);
+
+      qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID';
+      qrMisc.Params[0].AsInteger:=qrDict['ID'];
+      qrMisc.Open;
+      sbDict.Panels[2].Text:=IntToStr(qrMisc['CNT']);
+
   end;
 
 end;
@@ -656,7 +662,7 @@ begin
 
   if (not MainForm.AudioBusy) and dbgWords.Focused then
     MainForm.StartPronounce(word);
-
+  dm.CanPronounce:=false;
 end;
 
 

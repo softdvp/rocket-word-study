@@ -3,8 +3,8 @@ object frmOptions: TfrmOptions
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 631
-  ClientWidth = 590
+  ClientHeight = 629
+  ClientWidth = 582
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -175,7 +175,7 @@ object frmOptions: TfrmOptions
   end
   object btnCancel: TButton
     Left = 458
-    Top = 604
+    Top = 599
     Width = 75
     Height = 25
     Cancel = True
