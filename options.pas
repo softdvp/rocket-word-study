@@ -19,28 +19,32 @@ uses
 
 type
   TfrmOptions = class(TForm)
+    GroupBox1: TGroupBox;
+    edSoundLib: TJvDirectoryEdit;
+    GroupBox2: TGroupBox;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    btnOk: TButton;
+    btnCancel: TButton;
+    DBCheckBox1: TDBCheckBox;
+    Panel3: TPanel;
+    btnDel: TButton;
+    DBGrid1: TDBGrid;
+    Panel4: TPanel;
     Label1: TLabel;
     Label3: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    GroupBox1: TGroupBox;
-    Label8: TLabel;
-    edSoundLib: TJvDirectoryEdit;
-    GroupBox2: TGroupBox;
-    btnOk: TButton;
-    btnCancel: TButton;
-    DBGrid1: TDBGrid;
+    Label2: TLabel;
+    Label4: TLabel;
     DBEdit3: TDBEdit;
     DBEdit4: TDBEdit;
     DBEdit1: TDBEdit;
-    DBCheckBox1: TDBCheckBox;
     DBEdit2: TDBEdit;
-    Label2: TLabel;
     DBEdit5: TDBEdit;
-    Label4: TLabel;
     DBEdit6: TDBEdit;
-    Panel1: TPanel;
-    btnDel: TButton;
+    DBCheckBox2: TDBCheckBox;
+    DBCheckBox3: TDBCheckBox;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
