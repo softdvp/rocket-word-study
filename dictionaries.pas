@@ -46,7 +46,7 @@ type
     btnApply: TButton;
     Label1: TLabel;
     edFilter: TEdit;
-    ImageList1: TImageList;
+    imgDict: TImageList;
     SpeedButton1: TSpeedButton;
     btnClear: TButton;
     dlgExport: TSaveTextFileDialog;
@@ -55,12 +55,13 @@ type
     Panel5: TPanel;
     btnImport: TButton;
     btnExport: TButton;
-    btnDel: TButton;
     btnDelAllDict: TButton;
     btnDelStats: TButton;
     dbgWords: TDBGridView;
-    ActionList1: TActionList;
+    actDict: TActionList;
     dbgDict: TDBGridView;
+    btnDel: TBitBtn;
+    sbDel: TSpeedButton;
     procedure btnImportClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     
@@ -97,6 +98,7 @@ type
       Shift: TShiftState);
     procedure dbgDictCellAcceptCursor(Sender: TObject; Cell: TGridCell;
       var Accept: Boolean);
+    procedure sbDelClick(Sender: TObject);
   private
     LastWord : string;
     function GetWordFilterStr: string;
@@ -638,6 +640,16 @@ begin
   sbDict.Panels[1].Text:=IntToStr(SI.nPos);
 end;
 
+procedure TfrmDict.sbDelClick(Sender: TObject);
+begin
+  if MessageDlg('Would you like to delete the selected word?', mtConfirmation, [mbYes, mbNo], 0, mbNo)=mrYes then
+    with dm do
+    begin
+      qrWords.Delete;
+    end;
+
+end;
+
 procedure TfrmDict.dbgWordsCellAcceptCursor(Sender: TObject; Cell: TGridCell;
   var Accept: Boolean);
 var
@@ -899,4 +911,5 @@ begin
 end;
 
 end.
+
 
