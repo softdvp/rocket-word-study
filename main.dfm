@@ -4,8 +4,8 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Rocket Word Study '
-  ClientHeight = 330
-  ClientWidth = 644
+  ClientHeight = 327
+  ClientWidth = 632
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,13 +25,12 @@ object MainForm: TMainForm
   object tbMain: TToolBar
     Left = 0
     Top = 0
-    Width = 644
+    Width = 632
     Height = 29
     ButtonHeight = 28
     Caption = 'tbMain'
     Images = imgMain
     TabOrder = 0
-    ExplicitWidth = 648
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -108,8 +107,8 @@ object MainForm: TMainForm
   end
   object sbMain: TStatusBar
     Left = 0
-    Top = 297
-    Width = 644
+    Top = 294
+    Width = 632
     Height = 33
     Panels = <
       item
@@ -146,147 +145,41 @@ object MainForm: TMainForm
       end>
     ParentShowHint = False
     ShowHint = True
-    ExplicitTop = 298
-    ExplicitWidth = 648
   end
   object plMain: TJvPageList
     Left = 0
     Top = 29
-    Width = 644
-    Height = 268
+    Width = 632
+    Height = 265
     ActivePage = pge1
     PropagateEnable = False
     Align = alClient
-    ExplicitWidth = 648
-    ExplicitHeight = 269
     object pge1: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 652
-      Height = 270
-      ExplicitWidth = 648
-      ExplicitHeight = 269
-      object pnlOk: TPanel
-        Left = 0
-        Top = 213
-        Width = 652
-        Height = 57
-        Align = alBottom
-        TabOrder = 0
-        ExplicitTop = 212
-        ExplicitWidth = 648
-        object btnOk: TButton
-          Left = 1
-          Top = 1
-          Width = 650
-          Height = 55
-          Align = alClient
-          Caption = 'Continue'
-          Default = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -21
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 0
-          Visible = False
-          ExplicitWidth = 646
-        end
-      end
-      object pnlMain: TPanel
-        Left = 0
-        Top = 0
-        Width = 652
-        Height = 213
-        Align = alClient
-        BorderStyle = bsSingle
-        Color = clWindow
-        ParentBackground = False
-        PopupMenu = ppMain
-        TabOrder = 1
-        OnClick = pnlMainClick
-        ExplicitWidth = 648
-        ExplicitHeight = 212
-        object lblWord: TLabel
-          Left = 1
-          Top = 72
-          Width = 646
-          Height = 65
-          Align = alClient
-          Alignment = taCenter
-          AutoSize = False
-          Caption = 'Word'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -37
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
-          WordWrap = True
-          OnClick = pnlMainClick
-          ExplicitTop = 69
-          ExplicitWidth = 479
-        end
-        object lblTranslate: TLabel
-          Left = 1
-          Top = 1
-          Width = 646
-          Height = 71
-          Align = alTop
-          Alignment = taCenter
-          AutoSize = False
-          Caption = 'Translate'
-          Color = clWindow
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -37
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentColor = False
-          ParentFont = False
-          WordWrap = True
-          OnClick = pnlMainClick
-          ExplicitWidth = 670
-        end
-        object lblTranscript: TLabel
-          Left = 1
-          Top = 137
-          Width = 646
-          Height = 71
-          Align = alBottom
-          Alignment = taCenter
-          AutoSize = False
-          Caption = 'Transcript'
-          Color = clWindow
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clBlack
-          Font.Height = -37
-          Font.Name = 'PhoneticTM'
-          Font.Style = []
-          ParentColor = False
-          ParentFont = False
-          OnClick = pnlMainClick
-          ExplicitTop = 141
-          ExplicitWidth = 670
-        end
-      end
+      Width = 636
+      Height = 266
+      ExplicitWidth = 632
+      ExplicitHeight = 265
       object pnlSlip: TPanel
         Left = 0
         Top = 2
         Width = 369
         Height = 279
         Color = clWindow
+        DoubleBuffered = False
+        FullRepaint = False
         ParentBackground = False
+        ParentDoubleBuffered = False
         PopupMenu = ppMain
         TabOrder = 2
         OnClick = pnlMainClick
         object lblWordS: TLabel
           Left = 1
-          Top = 72
+          Top = 69
           Width = 367
-          Height = 135
-          Align = alClient
+          Height = 67
+          Align = alTop
           Alignment = taCenter
           AutoSize = False
           Font.Charset = DEFAULT_CHARSET
@@ -297,14 +190,13 @@ object MainForm: TMainForm
           ParentFont = False
           WordWrap = True
           OnClick = pnlMainClick
-          ExplicitTop = 75
-          ExplicitHeight = 71
+          ExplicitTop = 72
         end
         object lbTranslateS: TLabel
           Left = 1
           Top = 1
           Width = 367
-          Height = 71
+          Height = 68
           Align = alTop
           Alignment = taCenter
           AutoSize = False
@@ -319,9 +211,9 @@ object MainForm: TMainForm
         end
         object lblTranscriptS: TLabel
           Left = 1
-          Top = 207
+          Top = 210
           Width = 367
-          Height = 71
+          Height = 68
           Align = alBottom
           Alignment = taCenter
           AutoSize = False
@@ -332,47 +224,153 @@ object MainForm: TMainForm
           Font.Style = []
           ParentFont = False
           OnClick = pnlMainClick
-          ExplicitTop = 204
+          ExplicitTop = 207
+        end
+      end
+      object pnlOk: TPanel
+        Left = 0
+        Top = 209
+        Width = 636
+        Height = 57
+        Align = alBottom
+        TabOrder = 0
+        ExplicitTop = 208
+        ExplicitWidth = 632
+        object btnOk: TButton
+          Left = 1
+          Top = 1
+          Width = 634
+          Height = 55
+          Align = alClient
+          Caption = 'Continue'
+          Default = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          Visible = False
+          ExplicitWidth = 630
+        end
+      end
+      object pnlMain: TPanel
+        Left = 0
+        Top = 0
+        Width = 636
+        Height = 209
+        Align = alClient
+        BorderStyle = bsSingle
+        Color = clWindow
+        DoubleBuffered = False
+        FullRepaint = False
+        ParentBackground = False
+        ParentDoubleBuffered = False
+        PopupMenu = ppMain
+        TabOrder = 1
+        OnClick = pnlMainClick
+        ExplicitWidth = 632
+        ExplicitHeight = 208
+        object lblWord: TLabel
+          Left = 1
+          Top = 69
+          Width = 630
+          Height = 67
+          Align = alClient
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Word'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -37
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          WordWrap = True
+          OnClick = pnlMainClick
+          ExplicitWidth = 479
+          ExplicitHeight = 65
+        end
+        object lblTranslate: TLabel
+          Left = 1
+          Top = 1
+          Width = 630
+          Height = 68
+          Align = alTop
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Translate'
+          Color = clWindow
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -37
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentColor = False
+          ParentFont = False
+          WordWrap = True
+          OnClick = pnlMainClick
+        end
+        object lblTranscript: TLabel
+          Left = 1
+          Top = 136
+          Width = 630
+          Height = 68
+          Align = alBottom
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Transcript'
+          Color = clWindow
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clBlack
+          Font.Height = -37
+          Font.Name = 'PhoneticTM'
+          Font.Style = []
+          ParentColor = False
+          ParentFont = False
+          OnClick = pnlMainClick
+          ExplicitTop = 135
         end
       end
       object pnlFlip: TPanel
         Left = 0
         Top = 0
-        Width = 652
-        Height = 213
+        Width = 636
+        Height = 209
         Align = alClient
+        DoubleBuffered = True
+        FullRepaint = False
         ParentBackground = False
+        ParentDoubleBuffered = False
         TabOrder = 3
-        ExplicitWidth = 648
-        ExplicitHeight = 212
+        ExplicitWidth = 632
+        ExplicitHeight = 208
         object imgFlip: TEsImage
           Left = 1
           Top = 1
-          Width = 650
-          Height = 211
+          Width = 634
+          Height = 207
           Align = alClient
+          DoubleBuffered = True
           IncrementalDisplay = True
           Stretch = Center
           Transparent = False
-          ExplicitLeft = 0
-          ExplicitTop = 2
-          ExplicitWidth = 674
-          ExplicitHeight = 217
+          ExplicitLeft = 69
+          ExplicitTop = 361
         end
       end
     end
     object pge2: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 652
-      Height = 270
-      ExplicitWidth = 672
-      ExplicitHeight = 275
-      object Panel1: TPanel
+      Width = 636
+      Height = 266
+      object pnlFront: TPanel
         Left = 0
         Top = 0
-        Width = 672
-        Height = 275
+        Width = 636
+        Height = 266
         Align = alClient
         Color = clInfoBk
         Ctl3D = True
@@ -383,7 +381,7 @@ object MainForm: TMainForm
           Left = 1
           Top = 1
           Width = 130
-          Height = 273
+          Height = 264
           Align = alLeft
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000820000
@@ -1770,15 +1768,13 @@ object MainForm: TMainForm
     object pge3: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 652
-      Height = 270
-      ExplicitWidth = 672
-      ExplicitHeight = 275
+      Width = 636
+      Height = 266
       object pnlCountdown: TPanel
         Left = 0
         Top = 0
-        Width = 672
-        Height = 275
+        Width = 636
+        Height = 266
         Align = alClient
         Color = clWindow
         DoubleBuffered = True
@@ -2259,9 +2255,10 @@ object MainForm: TMainForm
   object dxOut: TDXAudioOut
     Input = VbMouse
     OnDone = dxOutDone
+    OnProgress = dxOutProgress
     DeviceNumber = 0
     Latency = 100
-    PrefetchData = True
+    PrefetchData = False
     PollingInterval = 100
     FramesInBuffer = 24576
     SpeedFactor = 1.000000000000000000

@@ -190,7 +190,7 @@ end;
 procedure TfrmDict.btnDelClick(Sender: TObject);
 begin
 
-  if MessageDlg('Would you like to delete the dictionary?',mtConfirmation, [mbYes, mbNo], 0, mbNo)=mrYes then
+  if MessageDlg('Would you like to delete the dictionary?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
     with dm do
     begin
       qrMisc.SQL.Text:='DELETE FROM WORDS WHERE DICTID=:ID';
@@ -204,7 +204,7 @@ end;
 procedure TfrmDict.btnDelStatsClick(Sender: TObject);
 begin
   if MessageDlg('Do you want to clear the statistics of dictioanary?',
-    mtConfirmation, [mbYes, mbNo], 0, mbNo)=mrYes then
+    mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
 
     with dm do
     begin
@@ -286,7 +286,7 @@ begin
 
     if FileExists(Filename) then
       if MessageDlg('File already exists. Rewrite it?',
-        mtConfirmation, [mbYes, mbNo], 0, mbYes)=mrNo then exit;
+        mtConfirmation, [mbNo, mbYes], 0, mbYes)=mrNo then exit;
 
     Sl:=TStringList.Create;
 
@@ -550,18 +550,20 @@ end;
 
 procedure TfrmDict.btnSelectAllClick(Sender: TObject);
 begin
-  SelectWords(true);
+  if MessageDlg('Would you like to select all words?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
+    SelectWords(true);
 
 end;
 
 procedure TfrmDict.btnUselectAllClick(Sender: TObject);
 begin
-  SelectWords(false);
+  if MessageDlg('Would you like to deselect all words?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
+    SelectWords(false);
 end;
 
 procedure TfrmDict.btnDelAllDictClick(Sender: TObject);
 begin
-  if MessageDlg('Would you like to delete all dictionaries?',mtConfirmation, [mbYes, mbNo], 0, mbNo)=mrYes then
+  if MessageDlg('Would you like to delete all dictionaries?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
     with dm do
     begin
       qrMisc.SQL.Text:='DELETE FROM WORDS';
@@ -642,7 +644,7 @@ end;
 
 procedure TfrmDict.sbDelClick(Sender: TObject);
 begin
-  if MessageDlg('Would you like to delete the selected word?', mtConfirmation, [mbYes, mbNo], 0, mbNo)=mrYes then
+  if MessageDlg('Would you like to delete the selected word?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
     with dm do
     begin
       qrWords.Delete;

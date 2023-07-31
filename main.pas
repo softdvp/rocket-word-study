@@ -153,6 +153,7 @@ type
     procedure tmrFlipTimer(Sender: TObject);
     procedure apeMainMessage(var Msg: tagMSG; var Handled: Boolean);
     procedure tmrCountdownTimer(Sender: TObject);
+    procedure dxOutProgress(Sender: TComponent);
   private
     Countdown, NextLevel, MaxLevel: integer;
     FullStudyMode, isCountdown, isProcess, isAbort,
@@ -659,9 +660,9 @@ begin
 
   if (pnlSlip.Left) >= 0 then
   begin
-    // At the end of the timer, set the position of Panel2 to fully cover pnlMain
-    pnlSlip.Left := 0;
+    // At the end of the timer, set the position of pnlSlip to fully cover pnlMain
     tmrSlip.Enabled := False;
+    pnlSlip.Left := 0;
     pnlslip.Width:=0;
   end;
 
@@ -680,11 +681,11 @@ begin
     tmrTimeout.Enabled:=false;
 
     ClearCardS;
+    ClearCard;
     ShowFullCardS(dm.qrRepeat);
     pnlSlip.Color:=pnlMain.Color;
     SlipCard;
-
-    ClearCard;
+    Application.ProcessMessages;
     ShowFullCard(dm.qrRepeat);
   finally
     actRepetition.Enabled:=true;
@@ -825,11 +826,11 @@ begin
         tmrPass.Enabled:=true;
 
         ClearCardS;
+        ClearCard;
         ShowFullCardS(qrStudy);
         pnlSlip.Color:=pnlMain.Color;
         SlipCard;
-
-        ClearCard;
+        Application.ProcessMessages;
         ShowFullCard(qrStudy)
       end
       else
@@ -996,16 +997,15 @@ begin
     pnlSlip.BringToFront;
 
     ClearCardS;
+    ClearCard;
 
     if (timest>=timesw) then
     begin
-      ClearCardS;
       ShowTranslateS(Query)
     end
     else
       if timesw>0 then
       begin
-        ClearCardS;
         ShowTranscriptS(Query);
         ShowWordS(Query);
       end;
@@ -1015,13 +1015,11 @@ begin
 
     if (timest>=timesw) then
     begin
-      ClearCard;
       ShowTranslate(Query)
     end
     else
       if timesw>0 then
       begin
-        ClearCard;
         ShowTranscript(Query);
         ShowWord(Query);
       end
@@ -1380,6 +1378,11 @@ begin
 
 end;
 
+procedure TMainForm.dxOutProgress(Sender: TComponent);
+begin
+  Application.ProcessMessages;
+end;
+
 procedure TMainForm.FlipCard;
 begin
   isGrip:=true;
@@ -1433,6 +1436,8 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  dxOut.PrefetchData:=true;
+
   bmpFront:=TBitmap.Create;
   bmpBack:=TBitmap.Create;
   bmpFlip:=TBitmap.Create;
@@ -1889,6 +1894,7 @@ end;
 procedure TMainForm.ShowFullCard;
 var
  s:string;
+ i:integer;
 begin
   try
     if Query.State in [dsInactive] then exit;
@@ -1902,6 +1908,10 @@ begin
     else lblTranscript.Caption:='';
 
     lblTranslate.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
+
+    for i:=1 to 100 do
+      Application.ProcessMessages;
+
     if not AudioBusy then
       StartPronounce(lblWord.Caption);
   except
@@ -2096,6 +2106,7 @@ var
   isExist:boolean;
 
 begin
+  dxOut.PrefetchData:=false;
   if words='' then exit;
 
   with dm do
@@ -2131,7 +2142,7 @@ begin
         WordList.Add(words)
       end
       else
-        ExtractStrings([' ',',','?', '/', '(',')'], [], PChar(words), WordList);
+        ExtractStrings([' ', '-', ',', '?', '/', '(',')'], [], PChar(words), WordList);
     end;
   end;
 
