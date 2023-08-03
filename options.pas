@@ -24,8 +24,6 @@ type
     GroupBox2: TGroupBox;
     Panel1: TPanel;
     Panel2: TPanel;
-    btnOk: TButton;
-    btnCancel: TButton;
     DBCheckBox1: TDBCheckBox;
     Panel3: TPanel;
     btnDel: TButton;
@@ -45,12 +43,17 @@ type
     DBEdit6: TDBEdit;
     DBCheckBox2: TDBCheckBox;
     DBCheckBox3: TDBCheckBox;
+    btnOk: TBitBtn;
+    btnClose: TBitBtn;
     procedure btnOkClick(Sender: TObject);
-    procedure btnCancelClick(Sender: TObject);
+    procedure CloseOptions;
     procedure FormActivate(Sender: TObject);
     procedure btnDelClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
+    toClose:boolean;
   public
     { Public declarations }
   end;
@@ -64,12 +67,43 @@ implementation
 
 uses dmmain;
 
-procedure TfrmOptions.btnCancelClick(Sender: TObject);
+procedure TfrmOptions.CloseOptions;
+var
+  DlgResult: TModalResult;
 begin
   with dm do
   begin
-    fdcRWS.Rollback;
-    fdcRWS.StartTransaction;
+    if qrOptions.State in [dsInsert, dsEdit]  then
+      isTransChanged:=true;
+    if qrLevels.State in [dsInsert, dsEdit]  then
+      isTransChanged:=true;
+
+    if isTransChanged then
+    begin
+      DlgResult:=MessageDlg('Would you like to save the changes?', mtConfirmation, [mbNo, mbYes, mbCancel], 0, mbCancel);
+
+      case DlgResult of
+        mrYes: btnOkClick(nil);
+        mrNo:
+          begin
+            if qrOptions.State in [dsInsert, dsEdit]  then
+              qrOptions.Cancel;
+            if qrLevels.State in [dsInsert, dsEdit]  then
+              qrLevels.Cancel;
+
+            RollbackRetaining;
+
+            qrOptions.Refresh;
+            qrLevels.Refresh;
+            toClose:=true
+          end;
+
+        mrCancel: toClose:=false;
+
+      end;
+
+    end
+    else toClose:=true;
   end;
 end;
 
@@ -104,9 +138,8 @@ begin
       qrOptions.Post;
     if qrLevels.State in [dsInsert, dsEdit]  then
       qrLevels.Post;
-
-    fdcRWS.Commit;
-    fdcRWS.StartTransaction;
+    CommitRetaining;
+    toClose:=true;
   end;
 end;
 
@@ -117,6 +150,17 @@ begin
     qrLevels.First;
     edSoundLib.Text:=qrOptions.FieldByName('SOUNDLIB').AsString;
   end;
+end;
+
+procedure TfrmOptions.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  CloseOptions
+end;
+
+procedure TfrmOptions.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CloseOptions;
+  CanClose:=toClose;
 end;
 
 end.

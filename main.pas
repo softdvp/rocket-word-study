@@ -1698,9 +1698,7 @@ begin
         end;
 
         qrStudy.Post;
-        fdcRws.Commit;
-        fdcRws.StartTransaction;
-
+        CommitRetaining;
         qrStudy.Next;
 
         if qrStudy.Eof then
@@ -1739,8 +1737,7 @@ begin
         NextLevel:=1;
         SetStudyNextLevel(qrStudy);
 
-        fdcRWS.Commit;
-        fdcRWS.StartTransaction;
+        CommitRetaining;
 
         if qrStudy['STATE']<>g_learning then
         begin  //Remove from Random List
@@ -1819,8 +1816,8 @@ begin
         end;
       end;
 
-      fdcRWS.Commit;
-      fdcRWS.StartTransaction;
+      CommitRetaining;
+
     end
     else
       if qrRepeat.State in [dsEdit] then
@@ -2088,9 +2085,7 @@ begin
     if qrStudy.Active then
       qrStudy.Close;
 
-     fdcRWS.Commit;
-     fdcRWS.StartTransaction;
-
+    CommitRetaining;
   end;
 end;
 

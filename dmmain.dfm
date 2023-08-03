@@ -16,17 +16,21 @@ object dm: Tdm
       'OpenMode=CreateUTF8'
       'LockingMode=Normal')
     LoginPrompt = False
+    AfterCommit = fdcRWSAfterCommit
+    AfterRollback = fdcRWSAfterRollback
     Left = 56
     Top = 8
   end
   object qrDict: TFDQuery
+    AfterPost = qrDictAfterPost
+    AfterDelete = qrDictAfterDelete
     IndexFieldNames = 'ID'
     Connection = fdcRWS
     SQL.Strings = (
       'SELECT * FROM DICTIONARIES'
       'ORDER BY NAME')
-    Left = 412
-    Top = 8
+    Left = 20
+    Top = 192
   end
   object dsDict: TDataSource
     DataSet = qrDict
@@ -34,6 +38,8 @@ object dm: Tdm
     Top = 72
   end
   object qrWords: TFDQuery
+    AfterPost = qrWordsAfterPost
+    AfterDelete = qrWordsAfterDelete
     AfterScroll = qrWordsAfterScroll
     IndexFieldNames = 'DICTID'
     MasterSource = dsDict
@@ -44,8 +50,8 @@ object dm: Tdm
       'SELECT *'
       'FROM WORDS'
       'WHERE DICTID=:ID')
-    Left = 312
-    Top = 8
+    Left = 64
+    Top = 192
     ParamData = <
       item
         Name = 'ID'
@@ -98,21 +104,25 @@ object dm: Tdm
       end>
   end
   object qrOptions: TFDQuery
+    AfterPost = qrOptionsAfterPost
+    AfterDelete = qrOptionsAfterDelete
     Connection = fdcRWS
     SQL.Strings = (
       'SELECT *'
       'FROM SETTINGS')
-    Left = 384
-    Top = 112
+    Left = 104
+    Top = 192
   end
   object qrLevels: TFDQuery
+    AfterPost = qrLevelsAfterPost
+    AfterDelete = qrLevelsAfterDelete
     Connection = fdcRWS
     SQL.Strings = (
       'SELECT *'
       'FROM LEVELS'
       'ORDER BY ID')
-    Left = 328
-    Top = 112
+    Left = 144
+    Top = 192
   end
   object dsOptions: TDataSource
     DataSet = qrOptions
@@ -192,8 +202,8 @@ object dm: Tdm
   end
   object qrMisc: TFDQuery
     Connection = fdcRWS
-    Left = 264
-    Top = 160
+    Left = 304
+    Top = 104
   end
   object qrTest: TFDQuery
     Connection = fdcRWS
@@ -209,8 +219,8 @@ object dm: Tdm
       'UPDATE WORDS'
       'SET STATE=0'
       'WHERE STATE=102 AND DICTID=:ID')
-    Left = 328
-    Top = 160
+    Left = 344
+    Top = 104
     ParamData = <
       item
         Name = 'ID'
@@ -227,8 +237,8 @@ object dm: Tdm
       'SELECT *'
       'FROM WORDS'
       'WHERE DICTID=:ID')
-    Left = 441
-    Top = 112
+    Left = 385
+    Top = 104
     ParamData = <
       item
         Name = 'ID'

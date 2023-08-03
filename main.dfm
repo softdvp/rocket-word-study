@@ -4,8 +4,8 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Rocket Word Study '
-  ClientHeight = 327
-  ClientWidth = 632
+  ClientHeight = 325
+  ClientWidth = 624
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,7 +25,7 @@ object MainForm: TMainForm
   object tbMain: TToolBar
     Left = 0
     Top = 0
-    Width = 632
+    Width = 624
     Height = 29
     ButtonHeight = 28
     Caption = 'tbMain'
@@ -107,8 +107,8 @@ object MainForm: TMainForm
   end
   object sbMain: TStatusBar
     Left = 0
-    Top = 294
-    Width = 632
+    Top = 292
+    Width = 624
     Height = 33
     Panels = <
       item
@@ -149,18 +149,18 @@ object MainForm: TMainForm
   object plMain: TJvPageList
     Left = 0
     Top = 29
-    Width = 632
-    Height = 265
+    Width = 624
+    Height = 263
     ActivePage = pge1
     PropagateEnable = False
     Align = alClient
     object pge1: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 636
-      Height = 266
-      ExplicitWidth = 632
-      ExplicitHeight = 265
+      Width = 628
+      Height = 264
+      ExplicitWidth = 624
+      ExplicitHeight = 263
       object pnlSlip: TPanel
         Left = 0
         Top = 2
@@ -229,17 +229,17 @@ object MainForm: TMainForm
       end
       object pnlOk: TPanel
         Left = 0
-        Top = 209
-        Width = 636
+        Top = 207
+        Width = 628
         Height = 57
         Align = alBottom
         TabOrder = 0
-        ExplicitTop = 208
-        ExplicitWidth = 632
+        ExplicitTop = 206
+        ExplicitWidth = 624
         object btnOk: TButton
           Left = 1
           Top = 1
-          Width = 634
+          Width = 626
           Height = 55
           Align = alClient
           Caption = 'Continue'
@@ -252,14 +252,14 @@ object MainForm: TMainForm
           ParentFont = False
           TabOrder = 0
           Visible = False
-          ExplicitWidth = 630
+          ExplicitWidth = 622
         end
       end
       object pnlMain: TPanel
         Left = 0
         Top = 0
-        Width = 636
-        Height = 209
+        Width = 628
+        Height = 207
         Align = alClient
         BorderStyle = bsSingle
         Color = clWindow
@@ -270,13 +270,13 @@ object MainForm: TMainForm
         PopupMenu = ppMain
         TabOrder = 1
         OnClick = pnlMainClick
-        ExplicitWidth = 632
-        ExplicitHeight = 208
+        ExplicitWidth = 624
+        ExplicitHeight = 206
         object lblWord: TLabel
           Left = 1
           Top = 69
-          Width = 630
-          Height = 67
+          Width = 622
+          Height = 65
           Align = alClient
           Alignment = taCenter
           AutoSize = False
@@ -290,12 +290,11 @@ object MainForm: TMainForm
           WordWrap = True
           OnClick = pnlMainClick
           ExplicitWidth = 479
-          ExplicitHeight = 65
         end
         object lblTranslate: TLabel
           Left = 1
           Top = 1
-          Width = 630
+          Width = 622
           Height = 68
           Align = alTop
           Alignment = taCenter
@@ -311,11 +310,12 @@ object MainForm: TMainForm
           ParentFont = False
           WordWrap = True
           OnClick = pnlMainClick
+          ExplicitWidth = 630
         end
         object lblTranscript: TLabel
           Left = 1
-          Top = 136
-          Width = 630
+          Top = 134
+          Width = 622
           Height = 68
           Align = alBottom
           Alignment = taCenter
@@ -331,26 +331,27 @@ object MainForm: TMainForm
           ParentFont = False
           OnClick = pnlMainClick
           ExplicitTop = 135
+          ExplicitWidth = 630
         end
       end
       object pnlFlip: TPanel
         Left = 0
         Top = 0
-        Width = 636
-        Height = 209
+        Width = 628
+        Height = 207
         Align = alClient
         DoubleBuffered = True
         FullRepaint = False
         ParentBackground = False
         ParentDoubleBuffered = False
         TabOrder = 3
-        ExplicitWidth = 632
-        ExplicitHeight = 208
+        ExplicitWidth = 624
+        ExplicitHeight = 206
         object imgFlip: TEsImage
           Left = 1
           Top = 1
-          Width = 634
-          Height = 207
+          Width = 626
+          Height = 205
           Align = alClient
           DoubleBuffered = True
           IncrementalDisplay = True
@@ -358,14 +359,18 @@ object MainForm: TMainForm
           Transparent = False
           ExplicitLeft = 69
           ExplicitTop = 361
+          ExplicitWidth = 634
+          ExplicitHeight = 207
         end
       end
     end
     object pge2: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 636
-      Height = 266
+      Width = 628
+      Height = 264
+      ExplicitWidth = 636
+      ExplicitHeight = 266
       object pnlFront: TPanel
         Left = 0
         Top = 0
@@ -1768,8 +1773,10 @@ object MainForm: TMainForm
     object pge3: TJvStandardPage
       Left = 0
       Top = 0
-      Width = 636
-      Height = 266
+      Width = 628
+      Height = 264
+      ExplicitWidth = 636
+      ExplicitHeight = 266
       object pnlCountdown: TPanel
         Left = 0
         Top = 0

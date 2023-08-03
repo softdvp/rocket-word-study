@@ -82,12 +82,25 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure dsWordsDataChange(Sender: TObject; Field: TField);
     procedure qrWordsAfterScroll(DataSet: TDataSet);
+    procedure qrOptionsAfterDelete(DataSet: TDataSet);
+    procedure qrOptionsAfterPost(DataSet: TDataSet);
+    procedure qrLevelsAfterDelete(DataSet: TDataSet);
+    procedure qrLevelsAfterPost(DataSet: TDataSet);
+    procedure qrDictAfterDelete(DataSet: TDataSet);
+    procedure qrDictAfterPost(DataSet: TDataSet);
+    procedure qrWordsAfterDelete(DataSet: TDataSet);
+    procedure qrWordsAfterPost(DataSet: TDataSet);
+    procedure fdcRWSAfterCommit(Sender: TObject);
+    procedure fdcRWSAfterRollback(Sender: TObject);
   private
 
   public
     CurrDict, CurrWord: integer;
     DoPron:boolean;
+    isTransChanged:boolean;
     function GetLastInsertRowID: Int64;
+    procedure CommitRetaining;
+    procedure RollbackRetaining;
   end;
 
 var
@@ -102,6 +115,12 @@ implementation
 uses ShellFileSupport, dictionaries, main;
 
 {$R *.dfm}
+procedure Tdm.CommitRetaining;
+begin
+  fdcRWS.Commit;
+  fdcRWS.StartTransaction;
+end;
+
 procedure Tdm.DataModuleCreate(Sender: TObject);
 var
   db:string;
@@ -151,9 +170,59 @@ begin
     frmDict.dbgWordsCellClick(Nil);*)
 end;
 
+procedure Tdm.fdcRWSAfterCommit(Sender: TObject);
+begin
+  isTransChanged:=false;
+end;
+
+procedure Tdm.fdcRWSAfterRollback(Sender: TObject);
+begin
+  isTransChanged:=false;
+end;
+
 function Tdm.GetLastInsertRowID: Int64;
 begin
   Result := Int64(fdcRWS.GetLastAutoGenValue(''));
+end;
+
+procedure Tdm.qrDictAfterDelete(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrDictAfterPost(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrLevelsAfterDelete(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrLevelsAfterPost(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrOptionsAfterDelete(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrOptionsAfterPost(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrWordsAfterDelete(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
+end;
+
+procedure Tdm.qrWordsAfterPost(DataSet: TDataSet);
+begin
+  isTransChanged:=true;
 end;
 
 procedure Tdm.qrWordsAfterScroll(DataSet: TDataSet);
@@ -162,6 +231,12 @@ begin
   begin
     frmDict.Scroll;
   end;
+end;
+
+procedure Tdm.RollbackRetaining;
+begin
+  fdcRWS.Rollback;
+  fdcRWS.StartTransaction;
 end;
 
 end.

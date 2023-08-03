@@ -3,8 +3,8 @@ object frmOptions: TfrmOptions
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 576
-  ClientWidth = 582
+  ClientHeight = 575
+  ClientWidth = 578
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,17 +13,19 @@ object frmOptions: TfrmOptions
   Font.Style = []
   Position = poMainFormCenter
   OnActivate = FormActivate
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   TextHeight = 15
   object GroupBox1: TGroupBox
     Left = 0
-    Top = 438
-    Width = 582
+    Top = 437
+    Width = 578
     Height = 97
     Align = alBottom
     Caption = 'Sound Library'
     TabOrder = 1
-    ExplicitTop = 437
-    ExplicitWidth = 578
+    ExplicitTop = 436
+    ExplicitWidth = 574
     object edSoundLib: TJvDirectoryEdit
       Left = 16
       Top = 46
@@ -46,28 +48,28 @@ object frmOptions: TfrmOptions
   object GroupBox2: TGroupBox
     Left = 0
     Top = 130
-    Width = 582
-    Height = 308
+    Width = 578
+    Height = 307
     Align = alClient
     Caption = 'Study and Repeat'
     TabOrder = 0
-    ExplicitWidth = 578
-    ExplicitHeight = 307
+    ExplicitWidth = 574
+    ExplicitHeight = 306
     object Panel1: TPanel
       Left = 2
       Top = 17
-      Width = 578
-      Height = 205
+      Width = 574
+      Height = 204
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 574
-      ExplicitHeight = 204
+      ExplicitWidth = 570
+      ExplicitHeight = 203
       object DBGrid1: TDBGrid
         Left = 0
         Top = 0
-        Width = 578
-        Height = 205
+        Width = 574
+        Height = 204
         Align = alClient
         DataSource = dm.dsLevels
         TabOrder = 0
@@ -116,13 +118,13 @@ object frmOptions: TfrmOptions
     end
     object Panel3: TPanel
       Left = 2
-      Top = 222
-      Width = 578
+      Top = 221
+      Width = 574
       Height = 84
       Align = alBottom
       TabOrder = 1
-      ExplicitTop = 221
-      ExplicitWidth = 574
+      ExplicitTop = 220
+      ExplicitWidth = 570
       object btnDel: TButton
         Left = 474
         Top = 6
@@ -158,44 +160,41 @@ object frmOptions: TfrmOptions
   end
   object Panel2: TPanel
     Left = 0
-    Top = 535
-    Width = 582
+    Top = 534
+    Width = 578
     Height = 41
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 534
-    ExplicitWidth = 578
-    object btnOk: TButton
-      Left = 362
-      Top = 8
+    ExplicitTop = 533
+    ExplicitWidth = 574
+    object btnOk: TBitBtn
+      Left = 368
+      Top = 6
       Width = 75
       Height = 25
-      Caption = '&Ok'
-      Default = True
-      ModalResult = 1
+      Kind = bkOK
+      NumGlyphs = 2
       TabOrder = 0
       OnClick = btnOkClick
     end
-    object btnCancel: TButton
-      Left = 458
-      Top = 8
+    object btnClose: TBitBtn
+      Left = 462
+      Top = 6
       Width = 75
       Height = 25
-      Cancel = True
-      Caption = '&Cancel'
-      ModalResult = 2
+      Kind = bkClose
+      NumGlyphs = 2
       TabOrder = 1
-      OnClick = btnCancelClick
     end
   end
   object Panel4: TPanel
     Left = 0
     Top = 0
-    Width = 582
+    Width = 578
     Height = 130
     Align = alTop
     TabOrder = 3
-    ExplicitWidth = 578
+    ExplicitWidth = 574
     object Label1: TLabel
       Left = 24
       Top = 24

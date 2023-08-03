@@ -31,7 +31,7 @@ type
   TfrmDict = class(TForm)
     Panel1: TPanel;
     btnOk: TBitBtn;
-    btnCancel: TBitBtn;
+    btnClose: TBitBtn;
     Panel2: TPanel;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
@@ -68,7 +68,7 @@ type
     procedure btnApplyClick(Sender: TObject);
     procedure rbAllClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
-    procedure btnCancelClick(Sender: TObject);
+    procedure CloseDict;
     procedure edFilterChange(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnUselectAllClick(Sender: TObject);
@@ -99,8 +99,10 @@ type
     procedure dbgDictCellAcceptCursor(Sender: TObject; Cell: TGridCell;
       var Accept: Boolean);
     procedure sbDelClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     LastWord : string;
+    toClose:boolean;
     function GetWordFilterStr: string;
     function GetSelectedFilter: string;
     procedure SetFilter;
@@ -143,9 +145,8 @@ begin
     CurrWord:=qrOptions.FieldByName('LASTWORD').AsInteger;
 
     MainForm.SetMainPanel;
-
-    fdcRWS.Commit;
-    fdcRWS.StartTransaction;
+    CommitRetaining;
+    toClose:=true;
   end;
 end;
 
@@ -154,32 +155,41 @@ begin
   btnApplyClick(Sender);
 end;
 
-
-procedure TfrmDict.btnCancelClick(Sender: TObject);
+procedure TfrmDict.CloseDict;
+var
+  DlgResult: TModalResult;
 begin
-//  dbgDict.BeginUpdate;
-
-  with dm do
+  if dm.isTransChanged then
   begin
-    if qrWords.State in [dsInsert, dsEdit]  then
-      qrWords.Cancel;
-    if qrDict.State in [dsInsert, dsEdit]  then
-      qrDict.Cancel;
+    DlgResult:=MessageDlg('Would you like to save the changes?', mtConfirmation, [mbNo, mbYes, mbCancel], 0, mbCancel);
 
-    CurrDict:=qrOptions.FieldByName('DICTIONARY').AsInteger;
-    CurrWord:=qrOptions.FieldByName('LASTWORD').AsInteger;
+    case DlgResult of
+      mrYes:btnApplyClick(nil);
+      mrNo:
+        with dm do
+        begin
+          if qrWords.State in [dsInsert, dsEdit]  then
+            qrWords.Cancel;
+          if qrDict.State in [dsInsert, dsEdit]  then
+            qrDict.Cancel;
 
-    qrDict.Locate('ID', CurrDict,[]);
-    qrWords.Locate('ID', CurrWord, []);
+          CurrDict:=qrOptions.FieldByName('DICTIONARY').AsInteger;
+          CurrWord:=qrOptions.FieldByName('LASTWORD').AsInteger;
 
-    fdcRWS.Rollback;
-    fdcRWS.StartTransaction;
+          qrDict.Locate('ID', CurrDict,[]);
+          qrWords.Locate('ID', CurrWord, []);
 
-    qrDict.Refresh;
-    qrWords.Refresh;
-  end;
+          RollbackRetaining;
 
-//  dbgDict.EndUpdate;
+          qrDict.Refresh;
+          qrWords.Refresh;
+          toClose:=true;
+        end;
+
+      mrCancel:toClose:=false;
+    end
+  end
+  else toClose:=true;
 end;
 
 procedure TfrmDict.btnClearClick(Sender: TObject);
@@ -775,7 +785,13 @@ end;
 
 procedure TfrmDict.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  btnCancelClick(Self);
+  CloseDict;
+end;
+
+procedure TfrmDict.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CloseDict;
+  CanClose:=toClose;
 end;
 
 procedure TfrmDict.FormCreate(Sender: TObject);

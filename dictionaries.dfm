@@ -3,8 +3,8 @@ object frmDict: TfrmDict
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Dictionaries'
-  ClientHeight = 500
-  ClientWidth = 881
+  ClientHeight = 498
+  ClientWidth = 873
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,21 +15,22 @@ object frmDict: TfrmDict
   Position = poMainFormCenter
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
-    Top = 439
-    Width = 881
+    Top = 437
+    Width = 873
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 438
-    ExplicitWidth = 877
+    ExplicitTop = 436
+    ExplicitWidth = 869
     object btnOk: TBitBtn
-      Left = 634
+      Left = 578
       Top = 6
       Width = 75
       Height = 25
@@ -39,19 +40,17 @@ object frmDict: TfrmDict
       TabOrder = 0
       OnClick = btnOkClick
     end
-    object btnCancel: TBitBtn
-      Left = 796
+    object btnClose: TBitBtn
+      Left = 756
       Top = 6
       Width = 75
       Height = 24
-      Caption = '&Cancel'
-      Kind = bkCancel
+      Kind = bkClose
       NumGlyphs = 2
       TabOrder = 2
-      OnClick = btnCancelClick
     end
     object btnApply: TButton
-      Left = 715
+      Left = 667
       Top = 6
       Width = 75
       Height = 25
@@ -63,31 +62,31 @@ object frmDict: TfrmDict
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 881
-    Height = 439
+    Width = 873
+    Height = 437
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 877
-    ExplicitHeight = 438
+    ExplicitWidth = 869
+    ExplicitHeight = 436
     object GroupBox1: TGroupBox
       Left = 1
       Top = 1
-      Width = 456
-      Height = 437
+      Width = 448
+      Height = 435
       Align = alClient
       Caption = 'Dictionaries'
       TabOrder = 0
-      ExplicitWidth = 452
-      ExplicitHeight = 436
+      ExplicitWidth = 444
+      ExplicitHeight = 434
       object Panel5: TPanel
         Left = 2
-        Top = 394
-        Width = 452
+        Top = 392
+        Width = 444
         Height = 41
         Align = alBottom
         TabOrder = 0
-        ExplicitTop = 393
-        ExplicitWidth = 448
+        ExplicitTop = 391
+        ExplicitWidth = 440
         object btnImport: TButton
           Left = 6
           Top = 6
@@ -150,8 +149,8 @@ object frmDict: TfrmDict
       object dbgDict: TDBGridView
         Left = 2
         Top = 17
-        Width = 452
-        Height = 377
+        Width = 444
+        Height = 375
         Align = alClient
         AllowDeleteRecord = False
         AllowEdit = False
@@ -170,15 +169,15 @@ object frmDict: TfrmDict
       end
     end
     object GroupBox2: TGroupBox
-      Left = 457
+      Left = 449
       Top = 1
       Width = 423
-      Height = 437
+      Height = 435
       Align = alRight
       Caption = 'Words'
       TabOrder = 1
-      ExplicitLeft = 453
-      ExplicitHeight = 436
+      ExplicitLeft = 445
+      ExplicitHeight = 434
       object Panel3: TPanel
         Left = 2
         Top = 17
@@ -252,14 +251,14 @@ object frmDict: TfrmDict
       end
       object Panel4: TPanel
         Left = 2
-        Top = 394
+        Top = 392
         Width = 419
         Height = 41
         Align = alBottom
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
-        ExplicitTop = 393
+        ExplicitTop = 391
         object SpeedButton1: TSpeedButton
           Left = 320
           Top = 6
@@ -305,7 +304,7 @@ object frmDict: TfrmDict
         Left = 2
         Top = 107
         Width = 419
-        Height = 287
+        Height = 285
         Align = alClient
         AllowDeleteRecord = False
         AllowEdit = False
@@ -353,8 +352,8 @@ object frmDict: TfrmDict
   end
   object sbDict: TStatusBar
     Left = 0
-    Top = 474
-    Width = 881
+    Top = 472
+    Width = 873
     Height = 26
     Panels = <
       item
@@ -366,8 +365,8 @@ object frmDict: TfrmDict
       item
         Width = 50
       end>
-    ExplicitTop = 473
-    ExplicitWidth = 877
+    ExplicitTop = 471
+    ExplicitWidth = 869
   end
   object imgDict: TImageList
     Left = 512
