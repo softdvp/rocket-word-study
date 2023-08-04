@@ -100,12 +100,13 @@ type
       var Accept: Boolean);
     procedure sbDelClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure SetFilter;
+
   private
     LastWord : string;
     toClose:boolean;
     function GetWordFilterStr: string;
     function GetSelectedFilter: string;
-    procedure SetFilter;
     procedure SelectWords(Sel: boolean);
     procedure ImportRwsFile;
     procedure ImportCvsFile;
@@ -658,6 +659,7 @@ begin
     with dm do
     begin
       qrWords.Delete;
+      CheckedNum;
     end;
 
 end;

@@ -24,6 +24,8 @@ object dm: Tdm
   object qrDict: TFDQuery
     AfterPost = qrDictAfterPost
     AfterDelete = qrDictAfterDelete
+    BeforeScroll = qrDictBeforeScroll
+    AfterScroll = qrDictAfterScroll
     IndexFieldNames = 'ID'
     Connection = fdcRWS
     SQL.Strings = (

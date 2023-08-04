@@ -91,7 +91,7 @@ type
     tmrSlip: TTimer;
     pnlSlip: TPanel;
     lblWordS: TLabel;
-    lbTranslateS: TLabel;
+    lblTranslateS: TLabel;
     lblTranscriptS: TLabel;
     tmrFlip: TTimer;
     pnlFlip: TPanel;
@@ -1327,7 +1327,7 @@ procedure TMainForm.ClearCardS;
 begin
   lblWordS.Caption:='';
   lblTranscriptS.Caption:='';
-  lbTranslateS.Caption:='';
+  lblTranslateS.Caption:='';
 end;
 
 
@@ -1467,6 +1467,9 @@ begin
   FrontRect.Left:=0;
   FrontRect.Height:=bmpBack.Height;
   FrontRect.Width:=bmpBack.Width;
+
+  lblTranscriptS.Height:=lblTranscript.Height;
+  lblTranslateS.Height:=lblTranslate.Height;
 
   IDList:=TList<integer>.Create;
   WordList := TStringList.Create;
@@ -1880,7 +1883,7 @@ begin
       lblTranscriptS.Caption:='['+s+']'
     else lblTranscriptS.Caption:='';
 
-    lbTranslateS.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
+    lblTranslateS.Caption:=TranslByNum(Query.FieldByName('TRANSLATION').AsString, 1);
   except
 
   on E: Exception do

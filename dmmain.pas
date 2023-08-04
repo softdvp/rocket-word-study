@@ -92,8 +92,10 @@ type
     procedure qrWordsAfterPost(DataSet: TDataSet);
     procedure fdcRWSAfterCommit(Sender: TObject);
     procedure fdcRWSAfterRollback(Sender: TObject);
+    procedure qrDictBeforeScroll(DataSet: TDataSet);
+    procedure qrDictAfterScroll(DataSet: TDataSet);
   private
-
+     OldFilter:string;
   public
     CurrDict, CurrWord: integer;
     DoPron:boolean;
@@ -193,6 +195,26 @@ end;
 procedure Tdm.qrDictAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+end;
+
+procedure Tdm.qrDictAfterScroll(DataSet: TDataSet);
+begin
+  if frmDict<>nil then
+  begin
+    frmDict.edFilter.Text:=OldFilter;
+    frmDict.SetFilter;
+  end;
+end;
+
+procedure Tdm.qrDictBeforeScroll(DataSet: TDataSet);
+begin
+  if frmDict<>nil then
+  begin
+    OldFilter:=frmDict.edFilter.Text;
+    frmDict.edFilter.Text:='';
+
+    frmDict.SetFilter;
+  end;
 end;
 
 procedure Tdm.qrLevelsAfterDelete(DataSet: TDataSet);
