@@ -15,19 +15,13 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.Samples.Spin, Vcl.Mask, JvExStdCtrls, JvEdit, JvValidateEdit, JvExMask,
-  JvToolEdit, Vcl.ExtCtrls, Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids;
+  JvToolEdit, Vcl.ExtCtrls, Vcl.DBCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.ComCtrls;
 
 type
   TfrmOptions = class(TForm)
-    GroupBox1: TGroupBox;
-    edSoundLib: TJvDirectoryEdit;
-    GroupBox2: TGroupBox;
-    Panel1: TPanel;
-    Panel2: TPanel;
-    DBCheckBox1: TDBCheckBox;
-    Panel3: TPanel;
-    btnDel: TButton;
-    DBGrid1: TDBGrid;
+    pcOptions: TPageControl;
+    tsMainOptions: TTabSheet;
     Panel4: TPanel;
     Label1: TLabel;
     Label3: TLabel;
@@ -41,10 +35,19 @@ type
     DBEdit2: TDBEdit;
     DBEdit5: TDBEdit;
     DBEdit6: TDBEdit;
+    GroupBox2: TGroupBox;
+    Panel1: TPanel;
+    DBGrid1: TDBGrid;
+    Panel3: TPanel;
     DBCheckBox2: TDBCheckBox;
     DBCheckBox3: TDBCheckBox;
+    Panel2: TPanel;
     btnOk: TBitBtn;
     btnClose: TBitBtn;
+    tsSoundLibs: TTabSheet;
+    DBCheckBox1: TDBCheckBox;
+    edSoundLib: TJvDirectoryEdit;
+    btnDel: TButton;
     procedure btnOkClick(Sender: TObject);
     procedure CloseOptions;
     procedure FormActivate(Sender: TObject);
@@ -150,6 +153,8 @@ begin
     qrLevels.First;
     edSoundLib.Text:=qrOptions.FieldByName('SOUNDLIB').AsString;
   end;
+
+  pcOptions.ActivePage:=tsMainOptions;
 end;
 
 procedure TfrmOptions.FormClose(Sender: TObject; var Action: TCloseAction);
