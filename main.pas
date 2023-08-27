@@ -2104,6 +2104,7 @@ var
   isExist:boolean;
 
 begin
+  frmDict.tmrSelectWord.Enabled:=false;
   dxOut.PrefetchData:=false;
   if words='' then exit;
 

@@ -210,7 +210,7 @@ procedure Tdm.qrDictBeforeScroll(DataSet: TDataSet);
 begin
   if frmDict<>nil then
   begin
-    OldFilter:=frmDict.edFilter.Text;
+    OldFilter:=trim(frmDict.edFilter.Text);
     frmDict.edFilter.Text:='';
 
     frmDict.SetFilter;
@@ -249,10 +249,19 @@ end;
 
 procedure Tdm.qrWordsAfterScroll(DataSet: TDataSet);
 begin
-  if (frmDict<>nil) and frmDict.Active and DoPron then
+  if (frmDict<>nil) and frmDict.Active then
+  with frmDict do
   begin
-    frmDict.Scroll;
+    if DoPron then
+      Scroll
+    else
+    begin
+
+      tmrSelectWord.Enabled:=false;
+      tmrSelectWord.Enabled:=true;
+    end;
   end;
+
 end;
 
 procedure Tdm.RollbackRetaining;

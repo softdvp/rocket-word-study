@@ -3,8 +3,8 @@ object frmDict: TfrmDict
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Dictionaries'
-  ClientHeight = 497
-  ClientWidth = 869
+  ClientHeight = 495
+  ClientWidth = 861
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,12 +21,14 @@ object frmDict: TfrmDict
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
-    Top = 436
-    Width = 869
+    Top = 434
+    Width = 861
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 433
+    ExplicitWidth = 857
     object btnOk: TBitBtn
       Left = 578
       Top = 6
@@ -43,7 +45,7 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 24
-      Kind = bkClose
+      Kind = bkCancel
       NumGlyphs = 2
       TabOrder = 2
     end
@@ -60,29 +62,31 @@ object frmDict: TfrmDict
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 869
-    Height = 436
+    Width = 861
+    Height = 434
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 857
+    ExplicitHeight = 433
     object GroupBox1: TGroupBox
       Left = 1
       Top = 1
-      Width = 448
-      Height = 435
+      Width = 436
+      Height = 432
       Align = alClient
       Caption = 'Dictionaries'
       TabOrder = 0
-      ExplicitWidth = 444
-      ExplicitHeight = 434
+      ExplicitWidth = 432
+      ExplicitHeight = 431
       object Panel5: TPanel
         Left = 2
-        Top = 392
-        Width = 444
+        Top = 389
+        Width = 432
         Height = 41
         Align = alBottom
         TabOrder = 0
-        ExplicitTop = 391
-        ExplicitWidth = 440
+        ExplicitTop = 388
+        ExplicitWidth = 428
         object btnImport: TButton
           Left = 6
           Top = 6
@@ -145,8 +149,8 @@ object frmDict: TfrmDict
       object dbgDict: TDBGridView
         Left = 2
         Top = 17
-        Width = 444
-        Height = 375
+        Width = 432
+        Height = 372
         Align = alClient
         AllowDeleteRecord = False
         AllowEdit = False
@@ -165,15 +169,15 @@ object frmDict: TfrmDict
       end
     end
     object GroupBox2: TGroupBox
-      Left = 449
+      Left = 437
       Top = 1
       Width = 423
-      Height = 435
+      Height = 432
       Align = alRight
       Caption = 'Words'
       TabOrder = 1
-      ExplicitLeft = 445
-      ExplicitHeight = 434
+      ExplicitLeft = 433
+      ExplicitHeight = 431
       object Panel3: TPanel
         Left = 2
         Top = 17
@@ -236,26 +240,30 @@ object frmDict: TfrmDict
           OnChange = edFilterChange
         end
         object btnClear: TButton
-          Left = 329
+          Left = 320
           Top = 57
-          Width = 75
+          Width = 24
           Height = 25
-          Caption = 'C&lear'
+          Hint = #1057#1076#1091#1092#1082
+          Caption = 'x'
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 5
+          StyleName = 'Windows'
           OnClick = btnClearClick
         end
       end
       object Panel4: TPanel
         Left = 2
-        Top = 392
+        Top = 389
         Width = 419
         Height = 41
         Align = alBottom
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
-        ExplicitTop = 391
-        object SpeedButton1: TSpeedButton
+        ExplicitTop = 388
+        object sbSound: TSpeedButton
           Left = 320
           Top = 6
           Width = 23
@@ -265,7 +273,7 @@ object frmDict: TfrmDict
           Images = MainForm.imgMain
           ParentShowHint = False
           ShowHint = True
-          OnClick = SpeedButton1Click
+          OnClick = sbSoundClick
         end
         object sbDel: TSpeedButton
           Left = 384
@@ -300,7 +308,7 @@ object frmDict: TfrmDict
         Left = 2
         Top = 107
         Width = 419
-        Height = 285
+        Height = 259
         Align = alClient
         AllowDeleteRecord = False
         AllowEdit = False
@@ -344,12 +352,35 @@ object frmDict: TfrmDict
             DefaultColumn = False
           end>
       end
+      object Panel6: TPanel
+        Left = 2
+        Top = 366
+        Width = 419
+        Height = 23
+        Align = alBottom
+        TabOrder = 3
+        ExplicitTop = 365
+        object lbTranscript: TLabel
+          Left = 1
+          Top = 4
+          Width = 417
+          Height = 18
+          Align = alBottom
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'PhoneticTM'
+          Font.Style = []
+          ParentFont = False
+          ExplicitWidth = 4
+        end
+      end
     end
   end
   object sbDict: TStatusBar
     Left = 0
-    Top = 471
-    Width = 869
+    Top = 469
+    Width = 861
     Height = 26
     Panels = <
       item
@@ -361,6 +392,8 @@ object frmDict: TfrmDict
       item
         Width = 50
       end>
+    ExplicitTop = 468
+    ExplicitWidth = 857
   end
   object imgDict: TImageList
     Left = 512
@@ -540,5 +573,11 @@ object frmDict: TfrmDict
   object actDict: TActionList
     Left = 513
     Top = 249
+  end
+  object tmrSelectWord: TTimer
+    Enabled = False
+    OnTimer = tmrSelectWordTimer
+    Left = 369
+    Top = 257
   end
 end

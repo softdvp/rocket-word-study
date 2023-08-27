@@ -47,7 +47,7 @@ type
     Label1: TLabel;
     edFilter: TEdit;
     imgDict: TImageList;
-    SpeedButton1: TSpeedButton;
+    sbSound: TSpeedButton;
     btnClear: TButton;
     dlgExport: TSaveTextFileDialog;
     dlgImport: TOpenTextFileDialog;
@@ -62,6 +62,9 @@ type
     dbgDict: TDBGridView;
     btnDel: TBitBtn;
     sbDel: TSpeedButton;
+    Panel6: TPanel;
+    lbTranscript: TLabel;
+    tmrSelectWord: TTimer;
     procedure btnImportClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     
@@ -74,7 +77,7 @@ type
     procedure btnUselectAllClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure btnDelClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure sbSoundClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
     procedure btnDelAllDictClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
@@ -101,6 +104,7 @@ type
     procedure sbDelClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure SetFilter;
+    procedure tmrSelectWordTimer(Sender: TObject);
 
   private
     LastWord : string;
@@ -598,6 +602,7 @@ end;
 procedure TfrmDict.dbgDictCellAcceptCursor(Sender: TObject; Cell: TGridCell;
   var Accept: Boolean);
 begin
+  lbTranscript.Caption:='';
   CheckedNum
 end;
 
@@ -680,11 +685,17 @@ end;
 
 procedure TfrmDict.Scroll;
 var
-  word: string;
+  word, s: string;
 begin
   RowNo;
   word:=dm.qrWords.FieldByName('WORD').AsString;
   LastWord:=word;
+
+  s:= dm.qrWords.FieldByName('TRANSCRIPTION').AsString;
+
+  if Trim(s)<>'' then
+    lbTranscript.Caption:='['+s+']'
+    else lbTranscript.Caption:='';
 
   if (not MainForm.AudioBusy) and dbgWords.Focused then
     MainForm.StartPronounce(word);
@@ -770,6 +781,7 @@ end;
 
 procedure TfrmDict.edFilterChange(Sender: TObject);
 begin
+  lbTranscript.Caption:='';
   SetFilter;
 end;
 
@@ -826,7 +838,7 @@ var
   s: string;
   sz: integer;
 begin
-  s:=edFilter.Text;
+  s:=trim(edFilter.Text);
 
   if Trim(s)<>'' then
   begin
@@ -848,7 +860,7 @@ var
   s: string;
   sz: integer;
 begin
-  s:=edFilter.Text;
+  s:=trim(edFilter.Text);
 
   if Trim(s)<>'' then
   begin
@@ -909,8 +921,24 @@ begin
     end;
 end;
 
-procedure TfrmDict.SpeedButton1Click(Sender: TObject);
+procedure TfrmDict.tmrSelectWordTimer(Sender: TObject);
+var s:string;
 begin
+  s:= dm.qrWords.FieldByName('TRANSCRIPTION').AsString;
+
+  tmrSelectWord.Enabled:=false;
+  LastWord:=dm.qrWords['WORD'];
+
+  if Trim(s)<>'' then
+    lbTranscript.Caption:='['+s+']'
+    else lbTranscript.Caption:='';
+
+  sbSoundClick(nil);
+end;
+
+procedure TfrmDict.sbSoundClick(Sender: TObject);
+begin
+
   if not MainForm.AudioBusy then
     MainForm.StartPronounce(LastWord);
 end;
