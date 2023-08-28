@@ -4,8 +4,8 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Rocket Word Study '
-  ClientHeight = 322
-  ClientWidth = 612
+  ClientHeight = 321
+  ClientWidth = 608
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,13 +25,12 @@ object MainForm: TMainForm
   object tbMain: TToolBar
     Left = 0
     Top = 0
-    Width = 612
+    Width = 608
     Height = 29
     ButtonHeight = 28
     Caption = 'tbMain'
     Images = imgMain
     TabOrder = 0
-    ExplicitWidth = 608
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -108,8 +107,8 @@ object MainForm: TMainForm
   end
   object sbMain: TStatusBar
     Left = 0
-    Top = 289
-    Width = 612
+    Top = 288
+    Width = 608
     Height = 33
     Panels = <
       item
@@ -146,19 +145,15 @@ object MainForm: TMainForm
       end>
     ParentShowHint = False
     ShowHint = True
-    ExplicitTop = 288
-    ExplicitWidth = 608
   end
   object plMain: TJvPageList
     Left = 0
     Top = 29
-    Width = 612
-    Height = 260
+    Width = 608
+    Height = 259
     ActivePage = pge1
     PropagateEnable = False
     Align = alClient
-    ExplicitWidth = 608
-    ExplicitHeight = 259
     object pge1: TJvStandardPage
       Left = 0
       Top = 0

@@ -927,7 +927,7 @@ begin
   s:= dm.qrWords.FieldByName('TRANSCRIPTION').AsString;
 
   tmrSelectWord.Enabled:=false;
-  LastWord:=dm.qrWords['WORD'];
+  LastWord:=dm.qrWords.FieldByName('WORD').AsString;
 
   if Trim(s)<>'' then
     lbTranscript.Caption:='['+s+']'

@@ -175,11 +175,17 @@ end;
 procedure Tdm.fdcRWSAfterCommit(Sender: TObject);
 begin
   isTransChanged:=false;
+
+  if (frmDict.btnApply<>Nil)  then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.fdcRWSAfterRollback(Sender: TObject);
 begin
   isTransChanged:=false;
+
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 function Tdm.GetLastInsertRowID: Int64;
@@ -190,11 +196,15 @@ end;
 procedure Tdm.qrDictAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrDictAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrDictAfterScroll(DataSet: TDataSet);
@@ -220,31 +230,45 @@ end;
 procedure Tdm.qrLevelsAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrLevelsAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrOptionsAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrOptionsAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrWordsAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrWordsAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+
+  if frmDict<>Nil then
+    frmDict.btnApply.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrWordsAfterScroll(DataSet: TDataSet);
