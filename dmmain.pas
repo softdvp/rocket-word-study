@@ -80,7 +80,6 @@ type
     qrStudyPassed: TFDQuery;
     qrExport: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
-    procedure dsWordsDataChange(Sender: TObject; Field: TField);
     procedure qrWordsAfterScroll(DataSet: TDataSet);
     procedure qrOptionsAfterDelete(DataSet: TDataSet);
     procedure qrOptionsAfterPost(DataSet: TDataSet);
@@ -94,6 +93,8 @@ type
     procedure fdcRWSAfterRollback(Sender: TObject);
     procedure qrDictBeforeScroll(DataSet: TDataSet);
     procedure qrDictAfterScroll(DataSet: TDataSet);
+    procedure dsOptionsStateChange(Sender: TObject);
+    procedure dsLevelsStateChange(Sender: TObject);
   private
      OldFilter:string;
   public
@@ -114,7 +115,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses ShellFileSupport, dictionaries, main;
+uses ShellFileSupport, dictionaries, main, options;
 
 {$R *.dfm}
 procedure Tdm.CommitRetaining;
@@ -165,11 +166,25 @@ begin
   end;
 end;
 
-procedure Tdm.dsWordsDataChange(Sender: TObject; Field: TField);
+procedure Tdm.dsLevelsStateChange(Sender: TObject);
 begin
-(*
-  if frmDict<>Nil then
-    frmDict.dbgWordsCellClick(Nil);*)
+  if qrLevels.State in [dsEdit, dsInsert] then
+  begin
+    frmOptions.btnOk.Enabled:=true;
+  end;
+
+  if frmOptions<>nil then
+    if qrLevels.State = dsBrowse then
+      frmOptions.dbgRepeat.Columns[1].ReadOnly:=true;
+end;
+
+procedure Tdm.dsOptionsStateChange(Sender: TObject);
+begin
+  if qrOptions.State in [dsEdit, dsInsert] then
+  begin
+    frmOptions.btnOk.Enabled:=true;
+  end;
+
 end;
 
 procedure Tdm.fdcRWSAfterCommit(Sender: TObject);
@@ -196,15 +211,24 @@ end;
 procedure Tdm.qrDictAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+
   if frmDict<>Nil then
     frmDict.btnApply.Enabled:=isTransChanged;
+
+  if (frmDict.btnOk<>Nil)  then
+    frmDict.btnOk.Enabled:=isTransChanged;
+
 end;
 
 procedure Tdm.qrDictAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
+
   if frmDict<>Nil then
     frmDict.btnApply.Enabled:=isTransChanged;
+
+  if (frmDict.btnOk<>Nil)  then
+    frmDict.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrDictAfterScroll(DataSet: TDataSet);
@@ -230,29 +254,29 @@ end;
 procedure Tdm.qrLevelsAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
-  if frmDict<>Nil then
-    frmDict.btnApply.Enabled:=isTransChanged;
+
+  frmOptions.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrLevelsAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
-  if frmDict<>Nil then
-    frmDict.btnApply.Enabled:=isTransChanged;
+
+  frmOptions.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrOptionsAfterDelete(DataSet: TDataSet);
 begin
   isTransChanged:=true;
-  if frmDict<>Nil then
-    frmDict.btnApply.Enabled:=isTransChanged;
+
+  frmOptions.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrOptionsAfterPost(DataSet: TDataSet);
 begin
   isTransChanged:=true;
-  if frmDict<>Nil then
-    frmDict.btnApply.Enabled:=isTransChanged;
+
+  frmOptions.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrWordsAfterDelete(DataSet: TDataSet);
@@ -261,6 +285,9 @@ begin
 
   if frmDict<>Nil then
     frmDict.btnApply.Enabled:=isTransChanged;
+
+  if (frmDict.btnOk<>Nil)  then
+    frmDict.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrWordsAfterPost(DataSet: TDataSet);
@@ -269,6 +296,9 @@ begin
 
   if frmDict<>Nil then
     frmDict.btnApply.Enabled:=isTransChanged;
+
+  if (frmDict.btnOk<>Nil)  then
+    frmDict.btnOk.Enabled:=isTransChanged;
 end;
 
 procedure Tdm.qrWordsAfterScroll(DataSet: TDataSet);
@@ -280,7 +310,6 @@ begin
       Scroll
     else
     begin
-
       tmrSelectWord.Enabled:=false;
       tmrSelectWord.Enabled:=true;
     end;

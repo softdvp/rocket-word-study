@@ -3,8 +3,8 @@ object frmOptions: TfrmOptions
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 575
-  ClientWidth = 578
+  ClientHeight = 571
+  ClientWidth = 562
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,26 +15,29 @@ object frmOptions: TfrmOptions
   OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   TextHeight = 15
   object pcOptions: TPageControl
     Left = 0
     Top = 0
-    Width = 578
-    Height = 534
+    Width = 562
+    Height = 530
     ActivePage = tsMainOptions
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 570
+    ExplicitHeight = 532
     object tsMainOptions: TTabSheet
       Caption = 'General'
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 570
+        Width = 566
         Height = 130
         Align = alTop
         ParentBackground = False
         TabOrder = 0
-        ExplicitTop = 8
+        ExplicitWidth = 562
         object Label1: TLabel
           Left = 24
           Top = 24
@@ -143,36 +146,39 @@ object frmOptions: TfrmOptions
       object GroupBox2: TGroupBox
         Left = 0
         Top = 130
-        Width = 570
-        Height = 374
+        Width = 566
+        Height = 373
         Align = alClient
         Caption = 'Study and Repeat'
         TabOrder = 1
-        ExplicitTop = 8
-        ExplicitHeight = 448
+        ExplicitWidth = 562
+        ExplicitHeight = 372
         object Panel1: TPanel
           Left = 2
           Top = 17
-          Width = 566
-          Height = 295
+          Width = 562
+          Height = 294
           Align = alClient
           BevelOuter = bvNone
           ParentBackground = False
           TabOrder = 0
-          ExplicitHeight = 271
-          object DBGrid1: TDBGrid
+          ExplicitWidth = 558
+          ExplicitHeight = 293
+          object dbgRepeat: TDBGrid
             Left = 0
             Top = 0
-            Width = 566
+            Width = 562
             Height = 258
             Align = alTop
             DataSource = dm.dsLevels
+            Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleHotTrack]
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
             TitleFont.Height = -12
             TitleFont.Name = 'Segoe UI'
             TitleFont.Style = []
+            OnEditButtonClick = dbgRepeatEditButtonClick
             Columns = <
               item
                 Expanded = False
@@ -180,8 +186,10 @@ object frmOptions: TfrmOptions
                 Visible = False
               end
               item
+                ButtonStyle = cbsEllipsis
                 Expanded = False
                 FieldName = 'NAME'
+                ReadOnly = True
                 Title.Caption = ' '
                 Width = 191
                 Visible = True
@@ -222,12 +230,14 @@ object frmOptions: TfrmOptions
         end
         object Panel3: TPanel
           Left = 2
-          Top = 312
-          Width = 566
+          Top = 311
+          Width = 562
           Height = 60
           Align = alBottom
           ParentBackground = False
           TabOrder = 1
+          ExplicitTop = 310
+          ExplicitWidth = 558
           object DBCheckBox2: TDBCheckBox
             Left = 24
             Top = 16
@@ -278,13 +288,13 @@ object frmOptions: TfrmOptions
   end
   object Panel2: TPanel
     Left = 0
-    Top = 534
-    Width = 578
+    Top = 530
+    Width = 562
     Height = 41
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 533
-    ExplicitWidth = 574
+    ExplicitTop = 532
+    ExplicitWidth = 570
     object btnOk: TBitBtn
       Left = 368
       Top = 6

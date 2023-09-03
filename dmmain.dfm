@@ -64,7 +64,6 @@ object dm: Tdm
   end
   object dsWords: TDataSource
     DataSet = qrWords
-    OnDataChange = dsWordsDataChange
     Left = 64
     Top = 72
   end
@@ -128,11 +127,13 @@ object dm: Tdm
   end
   object dsOptions: TDataSource
     DataSet = qrOptions
+    OnStateChange = dsOptionsStateChange
     Left = 112
     Top = 72
   end
   object dsLevels: TDataSource
     DataSet = qrLevels
+    OnStateChange = dsLevelsStateChange
     Left = 112
     Top = 8
   end

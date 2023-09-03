@@ -48,7 +48,6 @@ type
     edFilter: TEdit;
     imgDict: TImageList;
     sbSound: TSpeedButton;
-    btnClear: TButton;
     dlgExport: TSaveTextFileDialog;
     dlgImport: TOpenTextFileDialog;
     sbDict: TStatusBar;
@@ -65,6 +64,7 @@ type
     Panel6: TPanel;
     lbTranscript: TLabel;
     tmrSelectWord: TTimer;
+    btnClear: TBitBtn;
     procedure btnImportClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     
@@ -105,10 +105,15 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure SetFilter;
     procedure tmrSelectWordTimer(Sender: TObject);
+    procedure dbgWordsHeaderClick(Sender: TObject; Section: TGridHeaderSection);
+    procedure dbgWordsGetSortDirection(Sender: TObject;
+      Section: TGridHeaderSection; var SortDirection: TGridSortDirection);
 
   private
     LastWord : string;
     toClose:boolean;
+    FSortColumn:integer;
+    FSortDirection: TGridSortDirection;
     function GetWordFilterStr: string;
     function GetSelectedFilter: string;
     procedure SelectWords(Sel: boolean);
@@ -141,13 +146,13 @@ begin
     if qrWords.State in [dsInsert, dsEdit]  then
       qrWords.Post;
 
-    qrOptions.Edit;
-    qrOptions.FieldByName('DICTIONARY').AsInteger := qrDict.FieldByName('ID').AsInteger;
-    qrOptions.FieldByName('LASTWORD').AsInteger := qrWords.FieldByName('ID').AsInteger;
-    qrOptions.Post;
+    CurrDict:=qrDict.FieldByName('ID').AsInteger;
+    CurrWord:=qrWords.FieldByName('ID').AsInteger;
 
-    CurrDict:=qrOptions.FieldByName('DICTIONARY').AsInteger;
-    CurrWord:=qrOptions.FieldByName('LASTWORD').AsInteger;
+    qrOptions.Edit;
+    qrOptions.FieldByName('DICTIONARY').AsInteger :=CurrDict;
+    qrOptions.FieldByName('LASTWORD').AsInteger := CurrWord;
+    qrOptions.Post;
 
     MainForm.SetMainPanel;
     CommitRetaining;
@@ -178,23 +183,47 @@ begin
           if qrDict.State in [dsInsert, dsEdit]  then
             qrDict.Cancel;
 
-          CurrDict:=qrOptions.FieldByName('DICTIONARY').AsInteger;
-          CurrWord:=qrOptions.FieldByName('LASTWORD').AsInteger;
-
-          qrDict.Locate('ID', CurrDict,[]);
-          qrWords.Locate('ID', CurrWord, []);
-
           RollbackRetaining;
+
+          CurrDict:=qrDict.FieldByName('ID').AsInteger;
+          CurrWord:=qrWords.FieldByName('ID').AsInteger;
+
+          qrOptions.Edit;
+          qrOptions.FieldByName('DICTIONARY').AsInteger := CurrDict;
+          qrOptions.FieldByName('LASTWORD').AsInteger := CurrWord;
+          qrOptions.Post;
+
+          MainForm.SetMainPanel;
+          CommitRetaining;
 
           qrDict.Refresh;
           qrWords.Refresh;
+
           toClose:=true;
         end;
 
       mrCancel:toClose:=false;
     end
   end
-  else toClose:=true;
+  else
+  with dm do
+  begin
+    CurrDict:=qrDict.FieldByName('ID').AsInteger;
+    CurrWord:=qrWords.FieldByName('ID').AsInteger;
+
+    qrOptions.Edit;
+    qrOptions.FieldByName('DICTIONARY').AsInteger := CurrDict;
+    qrOptions.FieldByName('LASTWORD').AsInteger := CurrWord;
+    qrOptions.Post;
+
+    MainForm.SetMainPanel;
+    CommitRetaining;
+
+    qrDict.Refresh;
+    qrWords.Refresh;
+
+    toClose:=true;
+  end;
 end;
 
 procedure TfrmDict.btnClearClick(Sender: TObject);
@@ -220,13 +249,15 @@ procedure TfrmDict.btnDelStatsClick(Sender: TObject);
 begin
   if MessageDlg('Do you want to clear the statistics of dictioanary?',
     mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
-
     with dm do
     begin
       qrMisc.SQL.Text:='UPDATE WORDS SET STATE=0, DATETIME=NULL, REPEATWORD=0, REPEATTRANS=0, MISTAKE=0'+
         ' WHERE DICTID=:ID';
       qrMisc.ParamByName('ID').AsInteger:=qrDict['ID'];
       qrMisc.ExecSQL;
+
+      btnOk.Enabled:=true;
+      btnApply.Enabled:=true;
     end;
 end;
 
@@ -560,6 +591,9 @@ begin
       1: ImportRwsFile;
       2: ImportCvsFile;
       end;
+
+      btnOk.Enabled:=true;
+      btnApply.Enabled:=true;
     end;
 end;
 
@@ -744,6 +778,43 @@ begin
 end;
 
 
+procedure TfrmDict.dbgWordsGetSortDirection(Sender: TObject;
+  Section: TGridHeaderSection; var SortDirection: TGridSortDirection);
+begin
+  if Section.ColumnIndex=1 then
+    SortDirection := FSortDirection;
+end;
+
+procedure TfrmDict.dbgWordsHeaderClick(Sender: TObject;
+  Section: TGridHeaderSection);
+begin
+  if Section.ColumnIndex=1 then
+  begin
+    if FSortDirection=gsNone then
+      FSortDirection:=gsAscending
+    else FSortDirection:=gsNone;
+
+    dbgWords.InvalidateHeader;
+
+    with dm do
+    begin
+      CurrWord:=dm.qrWords['ID'];
+
+      qrWords.Close;
+
+      if FSortDirection=gsAscending then
+        qrWords.IndexFieldNames:='WORD; TRANSLATION'
+      else qrWords.IndexFieldNames:='';
+
+      qrWords.Open;
+      qrWords.Locate('ID', CurrWord, []);
+    end;
+
+    dbgWords.InvalidateGrid;
+  end;
+
+end;
+
 procedure TfrmDict.dbgWordsKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
@@ -754,27 +825,11 @@ begin
     VK_Down :
     begin
       dm.DoPron:=true;
-(*      dbgWords.DataSource.DataSet.Next;
-      word:=dm.qrWords.FieldByName('WORD').AsString;
-
-      LastWord:=word;
-      dbgWords.DataSource.DataSet.Prior;
-
-      if (not MainForm.AudioBusy) and dbgWords.Focused then
-        MainForm.StartPronounce(word);*)
     end;
 
     VK_Up :
     begin
       dm.DoPron:=true;
-(*      dbgWords.DataSource.DataSet.Prior;
-      word:=dm.qrWords.FieldByName('WORD').AsString;
-
-      LastWord:=word;
-      dbgWords.DataSource.DataSet.Next;
-
-      if (not MainForm.AudioBusy) and dbgWords.Focused then
-        MainForm.StartPronounce(word);*)
     end;
   end;
 end;
@@ -787,7 +842,7 @@ end;
 
 procedure TfrmDict.FormActivate(Sender: TObject);
 begin
-  frmDict.SetFocusedControl(btnOk);
+  btnOk.Enabled:=false;
   CheckedNum;
 
   with dm do
@@ -800,6 +855,7 @@ end;
 procedure TfrmDict.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   CloseDict;
+  btnOk.Enabled:=false;
 end;
 
 procedure TfrmDict.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -811,6 +867,12 @@ end;
 procedure TfrmDict.FormCreate(Sender: TObject);
 var CurrDir:string;
 begin
+  dm.qrWords.Close;
+  dm.qrWords.IndexFieldNames:='';
+  dm.qrWords.Open;
+  dbgWords.InvalidateGrid;
+
+
   CurrDir:=GetCurrentDir;
   dlgImport.InitialDir:=CurrDir+'\Dictionaries';
 
@@ -924,6 +986,8 @@ end;
 procedure TfrmDict.tmrSelectWordTimer(Sender: TObject);
 var s:string;
 begin
+  if not Visible then exit;
+
   s:= dm.qrWords.FieldByName('TRANSCRIPTION').AsString;
 
   tmrSelectWord.Enabled:=false;

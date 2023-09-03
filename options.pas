@@ -37,7 +37,7 @@ type
     DBEdit6: TDBEdit;
     GroupBox2: TGroupBox;
     Panel1: TPanel;
-    DBGrid1: TDBGrid;
+    dbgRepeat: TDBGrid;
     Panel3: TPanel;
     DBCheckBox2: TDBCheckBox;
     DBCheckBox3: TDBCheckBox;
@@ -54,6 +54,8 @@ type
     procedure btnDelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure dbgRepeatEditButtonClick(Sender: TObject);
   private
     { Private declarations }
     toClose:boolean;
@@ -76,10 +78,11 @@ var
 begin
   with dm do
   begin
-    if qrOptions.State in [dsInsert, dsEdit]  then
+    if (qrOptions.State in [dsInsert, dsEdit]) or (qrLevels.State in [dsInsert, dsEdit]) then
+    begin
       isTransChanged:=true;
-    if qrLevels.State in [dsInsert, dsEdit]  then
-      isTransChanged:=true;
+      frmOptions.btnOk.Enabled:=isTransChanged;
+    end;
 
     if isTransChanged then
     begin
@@ -110,10 +113,18 @@ begin
   end;
 end;
 
+procedure TfrmOptions.dbgRepeatEditButtonClick(Sender: TObject);
+begin
+  dbgRepeat.Columns[1].ReadOnly:=false;
+  dbgRepeat.SelectedIndex:=-1;
+  dbgRepeat.SelectedIndex:=1;
+end;
+
 procedure TfrmOptions.btnDelClick(Sender: TObject);
 var
   ID:integer;
 begin
+    if MessageDlg('Would you like to delete the this repetition level?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
   with dm do
   begin
     qrLevels.DisableControls;
@@ -148,6 +159,7 @@ end;
 
 procedure TfrmOptions.FormActivate(Sender: TObject);
 begin
+  btnOk.Enabled:=false;
   with dm do
   begin
     qrLevels.First;
@@ -159,13 +171,19 @@ end;
 
 procedure TfrmOptions.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  CloseOptions
+  CloseOptions;
+  btnOk.Enabled:=false;
 end;
 
 procedure TfrmOptions.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CloseOptions;
   CanClose:=toClose;
+end;
+
+procedure TfrmOptions.FormCreate(Sender: TObject);
+begin
+  TDrawGrid(dbgRepeat).ScrollBars:=ssVertical;
 end;
 
 end.
