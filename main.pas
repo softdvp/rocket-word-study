@@ -81,9 +81,7 @@ type
     ppMain: TPopupMenu;
     Markwordaslearned1: TMenuItem;
     tmrEnableActn: TTimer;
-    pnlSession: TPanel;
     tmrSession: TTimer;
-    btnReset: TButton;
     VbMouse: TVorbisIn;
     dxOut: TDXAudioOut;
     dxMouse: TDXAudioOut;
@@ -101,6 +99,12 @@ type
     imgCountdown: TImage;
     lbCoundown: TLabel;
     imgFlip: TEsImage;
+    btnReset: TToolButton;
+    pnlSession: TPanel;
+    ToolButton10: TToolButton;
+    ToolButton11: TToolButton;
+    ToolButton7: TToolButton;
+    Label1: TLabel;
     procedure actDictExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actRepeatExecute(Sender: TObject);
@@ -1594,7 +1598,10 @@ end;
 procedure TMainForm.apeMainMessage(var Msg: tagMSG; var Handled: Boolean);
 begin
   if Msg.Message=WM_LBUTTONDOWN then
+  begin
+    frmDict.HideLocatePanel;
     SoundMouseClick;
+  end;
 end;
 
 procedure TMainForm.apeMainShowHint(var HintStr: string; var CanShow: Boolean;
@@ -2101,7 +2108,6 @@ end;
 procedure TMainForm.StartPronounce(words: string);
 var
   Path, FN, word: string;
-  isExist:boolean;
 
 begin
   frmDict.tmrSelectWord.Enabled:=false;
@@ -2114,8 +2120,6 @@ begin
     if not qrOptions.FieldByName('PRONOUNCE').AsBoolean then
       exit;
 
-    isExist:=false;
-
     Path:=dm.qrOptions.FieldByName('SOUNDLIB').AsString;
 
     if JclFileUtils.PathIsAbsolute(Path) then
@@ -2127,7 +2131,6 @@ begin
     if FileExists(FN) then
     begin
       word:=words;
-      isExist:=true;
       WordList.Add(words)
     end
     else
@@ -2137,7 +2140,6 @@ begin
       if FileExists(FN) then
       begin
         word:=words;
-        isExist:=true;
         WordList.Add(words)
       end
       else

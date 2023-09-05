@@ -17,7 +17,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,FireDAC.Stan.Param, IOUtils,
   Vcl.DBCtrls, System.ImageList, Vcl.ImgList, RegularExpressions, JvDialogs,
   Vcl.ExtDlgs, Vcl.ComCtrls, Ex_Grid, Ex_DBGrid, System.Actions, Vcl.ActnList, ACS_DXAudio,
-  JvComponentBase, JvAppHotKey;
+  JvComponentBase, JvAppHotKey, JvExExtCtrls, JvBevel;
 
 const
   IsChecked : array[Boolean] of Integer =
@@ -65,9 +65,10 @@ type
     lbTranscript: TLabel;
     tmrSelectWord: TTimer;
     btnClear: TBitBtn;
+    pnlLocate: TPanel;
     procedure btnImportClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    
+
     procedure btnApplyClick(Sender: TObject);
     procedure rbAllClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -95,7 +96,6 @@ type
       Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbgWordsDblClick(Sender: TObject);
-    procedure hkSoundHotKey(Sender: TObject);
     procedure dbgDictColEnter(Sender: TObject);
     procedure dbgDictKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -108,11 +108,11 @@ type
     procedure dbgWordsHeaderClick(Sender: TObject; Section: TGridHeaderSection);
     procedure dbgWordsGetSortDirection(Sender: TObject;
       Section: TGridHeaderSection; var SortDirection: TGridSortDirection);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
 
   private
     LastWord : string;
     toClose:boolean;
-    FSortColumn:integer;
     FSortDirection: TGridSortDirection;
     function GetWordFilterStr: string;
     function GetSelectedFilter: string;
@@ -124,10 +124,10 @@ type
     function GetTranslationFilterStr: string;
     procedure CheckedNum;
     procedure RowNo;
-    { Private declarations }
+
   public
-    { Public declarations }
     procedure Scroll;
+    procedure HideLocatePanel;
   end;
 
 var
@@ -237,9 +237,9 @@ begin
   if MessageDlg('Would you like to delete the dictionary?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
     with dm do
     begin
-      qrMisc.SQL.Text:='DELETE FROM WORDS WHERE DICTID=:ID';
+(*      qrMisc.SQL.Text:='DELETE FROM WORDS WHERE DICTID=:ID';
       qrMisc.ParamByName('ID').AsString:=qrDict.FieldByName('ID').AsString;
-      qrMisc.ExecSQL;
+      qrMisc.ExecSQL; *)
 
       qrDict.Delete;
     end;
@@ -258,6 +258,7 @@ begin
 
       btnOk.Enabled:=true;
       btnApply.Enabled:=true;
+      dm.isTransChanged:=true;
     end;
 end;
 
@@ -338,7 +339,6 @@ begin
 
     try
       try
-
         case dlgExport.FilterIndex of
           1: ExportRwsFile(Sl, #9);
           2: ExportCvsFile(Sl, '|');
@@ -368,7 +368,6 @@ begin
           Encoding:=TEncoding.Unicode;
 
         Sl.SaveToFile(FileName, Encoding);
-
       except
 
       end;
@@ -376,6 +375,7 @@ begin
     finally
       Sl.Free;
     end;
+
   end;
 end;
 
@@ -412,68 +412,69 @@ begin
   EncIndex := dlgImport.EncodingIndex;
   Encoding := EncodingArray[EncIndex];
 
+  LastDictID:=0;
+
   try
-    try
-      SS.LoadFromFile(dlgImport.FileName, Encoding);
+    SS.LoadFromFile(dlgImport.FileName, Encoding);
 
-      with dm do
+    with dm do
+    begin
+      qrWords.DisableControls;
+      qrDict.DisableControls;
+
+      fn:=ExtractFileName(dlgImport.FileName);
+      qrDicImport.ParamByName('NAME').AsString:=ChangeFileExt(fn, '');
+      qrDicImport.ExecSQL;
+      LastDictID:=GetLastInsertRowID;
+
+      for i:= 0 to SS.Count-1 do
       begin
-        qrWords.DisableControls;
-        qrDict.DisableControls;
+        try
+          NextS:=SS[i];
 
-        fn:=ExtractFileName(dlgImport.FileName);
-        qrDicImport.ParamByName('NAME').AsString:=ChangeFileExt(fn, '');
-        qrDicImport.ExecSQL;
-        LastDictID:=GetLastInsertRowID;
+          NextS:=StringReplace(NextS, '''', 'ʹ', [rfReplaceAll, rfIgnoreCase]);
+          NextS:=StringReplace(NextS, '"', '""', [rfReplaceAll, rfIgnoreCase]);
 
-        for i:= 0 to SS.Count-1 do
-        begin
-          try
-            NextS:=SS[i];
+          Splitted.Clear;
 
-            NextS:=StringReplace(NextS, '''', 'ʹ', [rfReplaceAll, rfIgnoreCase]);
-            NextS:=StringReplace(NextS, '"', '""', [rfReplaceAll, rfIgnoreCase]);
+          ExtractStrings([#9],[], PChar(NextS), Splitted);
 
-            Splitted.Clear;
+          if Splitted.Count<2 then continue;
 
-            ExtractStrings([#9],[], PChar(NextS), Splitted);
+          s:=Splitted[0];
+          s1:=Splitted[1];
 
-            if Splitted.Count<2 then continue;
+          if Splitted.Count>2 then
+            s2:=Splitted[2]
+          else s2:=' ';
 
-            s:=Splitted[0];
-            s1:=Splitted[1];
-
-            if Splitted.Count>2 then
-              s2:=Splitted[2]
-            else s2:=' ';
-
-            if (trim(s1)<>'') then
-            begin
-              SQL:='INSERT INTO WORDS(DICTID, WORD, TRANSLATION, TRANSCRIPTION) VALUES (:DICTID, ":WORD", ":TRANSLATION", ":TRANSCRIPTION")';
-              SQL:=StringReplace(SQL, ':DICTID', IntToStr(LastDictID), []);
-              SQL:=StringReplace(SQL, ':WORD', s,[]);
-              SQL:=StringReplace(SQL, ':TRANSLATION', s1, []);
-              SQL:=StringReplace(SQL, ':TRANSCRIPTION', s2, []);
-              qrWordImport.ExecSql(SQL);
-            end;
-          except
+          if (trim(s1)<>'') then
+          begin
+            SQL:='INSERT INTO WORDS(DICTID, WORD, TRANSLATION, TRANSCRIPTION) VALUES (:DICTID, ":WORD", ":TRANSLATION", ":TRANSCRIPTION")';
+            SQL:=StringReplace(SQL, ':DICTID', IntToStr(LastDictID), []);
+            SQL:=StringReplace(SQL, ':WORD', s,[]);
+            SQL:=StringReplace(SQL, ':TRANSLATION', s1, []);
+            SQL:=StringReplace(SQL, ':TRANSCRIPTION', s2, []);
+            qrWordImport.ExecSql(SQL);
           end;
+        except
         end;
-
-        qrDict.Refresh;
-        qrDict.Locate('ID', LastDictID,[]);
-        qrOptions.Edit;
-        qrOptions.FieldByName('DICTIONARY').AsInteger:=LastDictID;
-        qrOptions.Post;
-        qrWords.EnableControls;
-        qrDict.EnableControls;
       end;
-
-    except
-
     end;
 
   finally
+    with dm do
+    begin
+      qrDict.Refresh;
+      qrDict.Locate('ID', LastDictID,[]);
+      qrOptions.Edit;
+      qrOptions.FieldByName('DICTIONARY').AsInteger:=LastDictID;
+      qrOptions.Post;
+
+      qrWords.EnableControls;
+      qrDict.EnableControls;
+    end;
+
     SS.Free;
     Splitted.Free;
   end;
@@ -512,78 +513,80 @@ begin
 
   EncIndex := dlgImport.EncodingIndex;
   Encoding := EncodingArray[EncIndex];
+  LastDictID:=0;
   try
-    try
+    SS.LoadFromFile(dlgImport.FileName, Encoding);
 
-      SS.LoadFromFile(dlgImport.FileName, Encoding);
+    with dm do
+    begin
+      qrWords.DisableControls;
+      qrDict.DisableControls;
 
-      with dm do
+      fn:=ExtractFileName(dlgImport.FileName);
+      qrDicImport.ParamByName('NAME').AsString:=ChangeFileExt(fn, '');
+      qrDicImport.ExecSQL;
+      LastDictID:=GetLastInsertRowID;
+
+      for i:= 0 to SS.Count-1 do
       begin
-        fn:=ExtractFileName(dlgImport.FileName);
-        qrDicImport.ParamByName('NAME').AsString:=ChangeFileExt(fn, '');
-        qrDicImport.ExecSQL;
-        LastDictID:=GetLastInsertRowID;
+        try
+          NextS:=SS[i];
 
-        for i:= 0 to SS.Count-1 do
-        begin
-          try
-            NextS:=SS[i];
+          NextS:=StringReplace(NextS, '''', 'ʹ', [rfReplaceAll, rfIgnoreCase]);
+          NextS:=StringReplace(NextS, '"', '""', [rfReplaceAll, rfIgnoreCase]);
 
-            NextS:=StringReplace(NextS, '''', 'ʹ', [rfReplaceAll, rfIgnoreCase]);
-            NextS:=StringReplace(NextS, '"', '""', [rfReplaceAll, rfIgnoreCase]);
+          Splitted.Clear;
 
-            Splitted.Clear;
+          ExtractStrings([#9, ',', '|'], [], PChar(NextS), Splitted);
 
-            ExtractStrings([#9, ',', '|'], [], PChar(NextS), Splitted);
+          if Splitted.Count<2 then continue;
 
-            if Splitted.Count<2 then continue;
+          s:=Splitted[0];
+          s1:=Splitted[1];
 
-            s:=Splitted[0];
-            s1:=Splitted[1];
+          if Length(s1)>100 then continue;
 
-            if Length(s1)>100 then continue;
+          if Splitted.Count>2 then
+            s2:=Splitted[2]
+          else s2:=' ';
 
-            if Splitted.Count>2 then
-              s2:=Splitted[2]
-            else s2:=' ';
+          if (trim(s2)<>'')  then
+          begin
+            SQL:='INSERT INTO WORDS(DICTID, WORD, TRANSLATION, TRANSCRIPTION) VALUES (:DICTID, ":WORD", ":TRANSLATION", ":TRANSCRIPTION")';
 
-            if (trim(s2)<>'')  then
-            begin
-              SQL:='INSERT INTO WORDS(DICTID, WORD, TRANSLATION, TRANSCRIPTION) VALUES (:DICTID, ":WORD", ":TRANSLATION", ":TRANSCRIPTION")';
-
-              SQL:=StringReplace(SQL, ':DICTID', IntToStr(LastDictID), []);
-              SQL:=StringReplace(SQL, ':WORD', s,[]);
-              SQL:=StringReplace(SQL, ':TRANSLATION', s2, []);
-              SQL:=StringReplace(SQL, ':TRANSCRIPTION', s1, []);
-              qrWordImport.ExecSql(SQL);
-            end;
-          except
-
+            SQL:=StringReplace(SQL, ':DICTID', IntToStr(LastDictID), []);
+            SQL:=StringReplace(SQL, ':WORD', s,[]);
+            SQL:=StringReplace(SQL, ':TRANSLATION', s2, []);
+            SQL:=StringReplace(SQL, ':TRANSCRIPTION', s1, []);
+            qrWordImport.ExecSql(SQL);
           end;
+        except
 
-         end;
+        end;
 
-        qrDict.Refresh;
-        qrDict.Locate('ID', LastDictID,[]);
-        qrOptions.Edit;
-        qrOptions.FieldByName('DICTIONARY').AsInteger:=LastDictID;
-        qrOptions.Post;
-      end;
-
-    except
-
+       end;
     end;
 
   finally
+    with dm do
+    begin
+      qrDict.Refresh;
+      qrDict.Locate('ID', LastDictID,[]);
+      qrOptions.Edit;
+      qrOptions.FieldByName('DICTIONARY').AsInteger:=LastDictID;
+      qrOptions.Post;
+
+      qrWords.EnableControls;
+      qrDict.EnableControls;
+    end;
+
     SS.Free;
     Splitted.Free;
   end;
-
 end;
 
 procedure TfrmDict.btnImportClick(Sender: TObject);
 begin
-
   if dlgImport.Execute then
     if FileExists(dlgImport.FileName) then
     begin
@@ -594,6 +597,8 @@ begin
 
       btnOk.Enabled:=true;
       btnApply.Enabled:=true;
+
+      dm.isTransChanged:=true;
     end;
 end;
 
@@ -601,7 +606,6 @@ procedure TfrmDict.btnSelectAllClick(Sender: TObject);
 begin
   if MessageDlg('Would you like to select all words?', mtConfirmation, [mbNo, mbYes], 0, mbNo)=mrYes then
     SelectWords(true);
-
 end;
 
 procedure TfrmDict.btnUselectAllClick(Sender: TObject);
@@ -630,6 +634,10 @@ begin
 
       qrDict.Close;
       qrDict.Open;
+
+      btnOk.Enabled:=true;
+      btnApply.Enabled:=true;
+      dm.isTransChanged:=true;
     end;
 end;
 
@@ -666,6 +674,8 @@ procedure TfrmDict.CheckedNum;
 begin
   with dm do
   begin
+      if qrDict.Eof then exit;
+
       qrMisc.SQL.Text:='SELECT COUNT(*) AS CNT FROM WORDS WHERE DICTID=:ID AND SELECTED=1';
       qrMisc.Params[0].AsInteger:=qrDict['ID'];
       qrMisc.Open;
@@ -675,9 +685,7 @@ begin
       qrMisc.Params[0].AsInteger:=qrDict['ID'];
       qrMisc.Open;
       sbDict.Panels[2].Text:=IntToStr(qrMisc['CNT']);
-
   end;
-
 end;
 
 procedure TfrmDict.RowNo;
@@ -700,13 +708,10 @@ begin
       qrWords.Delete;
       CheckedNum;
     end;
-
 end;
 
 procedure TfrmDict.dbgWordsCellAcceptCursor(Sender: TObject; Cell: TGridCell;
   var Accept: Boolean);
-var
-  word: string;
 begin
   RowNo;
 end;
@@ -757,8 +762,6 @@ begin
     qrWords.Edit;
     qrWords['SELECTED']:=not qrWords['SELECTED'];
     qrWords.Post;
-
-    //dbgWords.InvalidateCell(GridCell(0, Cell.Row));
   end;
 end;
 
@@ -766,7 +769,7 @@ procedure TfrmDict.dbgWordsGetCheckState(Sender: TObject; Cell: TGridCell;
   var CheckState: TCheckBoxState);
 var FieldVal:boolean;
 begin
-//
+
   FieldVal := dm.qrWords['SELECTED'];
   if Cell.Col = 0 then
   begin
@@ -817,8 +820,6 @@ end;
 
 procedure TfrmDict.dbgWordsKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-var
-  word:string;
 begin
 
   case Key of
@@ -843,6 +844,7 @@ end;
 procedure TfrmDict.FormActivate(Sender: TObject);
 begin
   btnOk.Enabled:=false;
+  HideLocatePanel;
   CheckedNum;
 
   with dm do
@@ -872,7 +874,6 @@ begin
   dm.qrWords.Open;
   dbgWords.InvalidateGrid;
 
-
   CurrDir:=GetCurrentDir;
   dlgImport.InitialDir:=CurrDir+'\Dictionaries';
 
@@ -888,6 +889,25 @@ begin
         MainForm.StartPronounce(LastWord);
   end;
 
+  if (Key<65) and (Key<>VK_BACK) then
+  begin
+    HideLocatePanel;
+    exit;
+  end;
+
+end;
+
+procedure TfrmDict.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key=char(VK_BACK) then
+  begin
+    pnlLocate.Caption:=Copy(pnlLocate.Caption, 0, length(pnlLocate.Caption)-1);
+    exit;
+  end;
+
+  pnlLocate.Caption:=pnlLocate.Caption+Key;
+  pnlLocate.Visible:=true;
+  dm.qrWords.Locate('WORD', pnlLocate.Caption, [loCaseInsensitive, loPartialKey] )
 end;
 
 procedure TfrmDict.rbAllClick(Sender: TObject);
@@ -911,10 +931,10 @@ begin
     Result:='';
 end;
 
-procedure TfrmDict.hkSoundHotKey(Sender: TObject);
+procedure TfrmDict.HideLocatePanel;
 begin
-(*      if not MainForm.AudioBusy then
-        MainForm.StartPronounce(LastWord);*)
+  pnlLocate.Caption:='';
+  pnlLocate.Visible:=false;
 end;
 
 function TfrmDict.GetTranslationFilterStr:string;

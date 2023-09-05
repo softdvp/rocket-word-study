@@ -3,8 +3,8 @@ object frmOptions: TfrmOptions
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 571
-  ClientWidth = 562
+  ClientHeight = 570
+  ClientWidth = 558
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,8 +20,8 @@ object frmOptions: TfrmOptions
   object pcOptions: TPageControl
     Left = 0
     Top = 0
-    Width = 562
-    Height = 530
+    Width = 558
+    Height = 529
     ActivePage = tsMainOptions
     Align = alClient
     TabOrder = 0
@@ -288,8 +288,8 @@ object frmOptions: TfrmOptions
   end
   object Panel2: TPanel
     Left = 0
-    Top = 530
-    Width = 562
+    Top = 529
+    Width = 558
     Height = 41
     Align = alBottom
     TabOrder = 1

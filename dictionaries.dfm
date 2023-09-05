@@ -18,6 +18,7 @@ object frmDict: TfrmDict
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
@@ -34,7 +35,6 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 25
-      Caption = '&OK'
       Kind = bkOK
       NumGlyphs = 2
       TabOrder = 0
@@ -45,6 +45,7 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 24
+      Caption = 'Close'
       Kind = bkCancel
       NumGlyphs = 2
       TabOrder = 2
@@ -54,7 +55,7 @@ object frmDict: TfrmDict
       Top = 6
       Width = 75
       Height = 25
-      Caption = '&Apply'
+      Caption = 'Apply'
       TabOrder = 1
       OnClick = btnApplyClick
     end
@@ -193,7 +194,7 @@ object frmDict: TfrmDict
           Top = 61
           Width = 29
           Height = 15
-          Caption = '&Filter:'
+          Caption = 'Filter:'
           FocusControl = edFilter
         end
         object RadioGroup1: TRadioGroup
@@ -291,7 +292,7 @@ object frmDict: TfrmDict
           Top = 6
           Width = 75
           Height = 25
-          Caption = '&Select all'
+          Caption = 'Select all'
           TabOrder = 0
           OnClick = btnSelectAllClick
         end
@@ -300,7 +301,7 @@ object frmDict: TfrmDict
           Top = 6
           Width = 75
           Height = 25
-          Caption = '&Deselect all'
+          Caption = 'Deselect all'
           TabOrder = 1
           OnClick = btnUselectAllClick
         end
@@ -383,6 +384,23 @@ object frmDict: TfrmDict
           ParentFont = False
           ExplicitWidth = 4
         end
+      end
+      object pnlLocate: TPanel
+        Left = 209
+        Top = 107
+        Width = 179
+        Height = 25
+        Alignment = taLeftJustify
+        Color = clInfoBk
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 4
+        Visible = False
       end
     end
   end
